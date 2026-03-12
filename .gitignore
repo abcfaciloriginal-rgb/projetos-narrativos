@@ -1,0 +1,42 @@
+.DS_Store
+.vscode
+node_modules
+# MacOS
+.DS_Store
+
+# Linux
+*~
+.Trash-*
+.nfs*
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+*.tmp
+
+# ambientes virtuais python
+.venv
+venv
+backend/.venv
+
+# cache python
+__pycache__/
+
+# arquivos de sistema
+.DS_Store
+
+# arquivos sensíveis
+.env
+
+# cache de editores
+.vscode/
+.history/

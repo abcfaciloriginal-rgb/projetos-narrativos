@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Contador de Histórias V6 — Anotado</title>
+
+<!--
+  Versão anotada: comentários bloco-a-bloco explicando a lógica do HTML/CSS/JS.
+  Use esta cópia para entender o que cada seção faz. Não altera a lógica de execução,
+  apenas adiciona explicações em comentários.
+-->
+
+<style>
+/* ============================================================
+   ESTÉTICA BASE: Inspirada na V2 (Layout Escuro)
+   Comentário: Este bloco define o visual geral da página: cores, fontes
+   e a estrutura de layout com duas colunas (main + chef).
+   ============================================================ */
+
+body{
+    /* Cor base de fundo e tipografia */
+    background:#141021; /* cor escura usada como fallback quando não há imagem de fundo */
+    color:#eee;
+    font-family:Arial, sans-serif;
+    margin:30px;
+
+    /* Layout com flex para duas colunas principais */
+    display:flex;
+    gap:20px;
+}
+
+/* Coluna principal: onde ficam os controles de geração e o resultado */
+.main{
+    flex:3;
+}
+
+/* Coluna lateral (modo chef) com opções adicionais */
+.chef{
+    flex:1;
+    background:#1e1733;
+    padding:15px;
+    border-radius:10px;
+}
+
+/* Estilos de títulos e elementos de formulário */
+h1{
+    color:#b57aff; /* destaque para o título */
+}
+
+textarea{
+    /* caixa de input principal para o texto/base da história */
+    width:100%;
+    height:220px;
+    background:#1a1428;
+    color:#fff;
+    border:1px solid #333;
+    padding:10px;
+    margin-bottom:15px;
+}
+
+button{
+    /* botões com cor chamativa para ação */
+    background:#b57aff;
+    border:none;
+    padding:8px 15px;
+    margin-right:8px;
+    cursor:pointer;
+    color:#000;
+    font-weight:bold;
+}
+
+select,input{
+    /* estilos básicos para selects e inputs */
+    background:#1a1428;
+    color:#fff;
+    border:1px solid #333;
+    padding:5px;
+    margin-right:10px;
+}
+
+.progress span{
+    /* itens clicáveis que representam as etapas do fluxo */
+    margin-right:10px;
+    cursor:pointer;
+}
+
+.active{
+    /* classe aplicada à etapa atual */
+    color:#b57aff;
+    font-weight:bold;
+}
+
+.output{
+    /* área onde o texto gerado pelo modelo é exibido */
+    margin-top:15px;
+    background:#1a1428;
+    padding:10px;
+    white-space:pre-wrap; /* preserva quebras/formatacao */
+}
+
+.metricas{
+    /* área para métricas (ex: legibilidade) */
+    margin-top:10px;
+    background:#1a1428;
+    padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     COLUNA PRINCIPAL
+     Comentário: contém títulos, controles gerais, textarea, botões e
+     área de resultados. Esta é a área principal de interação do usuário.
+============================================================ -->
+
+<div class="main">
+
+<h1>🎬 Contador de Histórias V6</h1>
+
+<!-- ============================= -->
+<!-- CONFIGURAÇÕES GERAIS -->
+<!-- ============================= -->
+
+<div>
+  <!-- Motor e Modelo: o usuário escolhe entre endpoints/fornecedores diferentes -->
+  Motor:
+  <select id="motor">
+    <option value="gemini">Gemini</option>
+    <option value="openai">OpenAI</option>
+  </select>
+
+  Modelo:
+  <select id="modelo">
+    <!-- Lista de modelos suportados (tanto Gemini quanto OpenAI) -->
+    <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+    <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+    <option value="gemini-3-flash">gemini-3-flash</option>
+    <option value="gpt-4o">gpt-4o</option>
+    <option value="gpt-4.1">gpt-4.1</option>
+    <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+  </select>
+
+    <!-- Temperatura e API Key: parâmetros usados para construir o prompt/req -->
+    Temperatura:
+    <input type="number" id="temperatura" value="0.7" step="0.1" min="0" max="1.2">
+
+  API Key:
+  <input type="password" id="apikey" style="width:250px"> <!-- NÃO deixar keys visíveis em produção -->
+</div>
+
+<br>
+
+<!-- ============================= -->
+<!-- NAVEGAÇÃO DE ETAPAS -->
+<!-- ============================= -->
+
+<div class="progress">
+  <!-- Cada span muda a etapa atual via onclick -> irPara('etapa') -->
+  <span onclick="irPara('lapidar')" id="lapidar">Lapidar</span> →
+  <span onclick="irPara('estruturar')" id="estruturar">Estruturar</span> →
+  <span onclick="irPara('forjar')" id="forjar">Forjar</span> →
+  <span onclick="irPara('auditar')" id="auditar">Auditar</span>
+</div>
+
+<br>
+
+<!-- Caixa principal de texto que o usuário coloca (prompt ou história base) -->
+<textarea id="texto"></textarea>
+
+<!-- Ações principais -->
+<button onclick="executar()">Executar</button>
+<button onclick="proximo()">Próximo</button>
+<button onclick="voltar()">Voltar</button>
+<!-- Botão de salvamento simples: gera um arquivo .md para a etapa atual via download -->
+<button onclick="saveCurrentPhaseAsMD()">Salvar etapa (.md)</button>
+
+<!-- Área onde o resultado do modelo (texto gerado) será mostrado.
+    Tornamos editável para permitir curadoria humana (correções, suavizações).
+    Implementação mínima e segura: um <textarea> que é usado também para análise
+    e para salvar via download .md (evita APIs experimentais que causaram crash). -->
+<textarea id="resultado" class="output" placeholder="Resultado (edite se desejar)"></textarea>
+
+<!-- Bloco de métricas: aqui está a legibilidade (Flesch) -->
+<div class="metricas">
+  <strong>📊 Legibilidade (Flesch PT)</strong>
+  <div id="resultadoFlesch">Ainda não analisado.</div>
+  <button onclick="analisarLegibilidade()">Analisar Legibilidade</button>
+</div>
+
+</div> <!-- fim .main -->
+
+
+<!-- ============================================================
+     MODO CHEF 2.0 (Coluna lateral)
+     Comentário: opções para controlar público, estrutura narrativa etc.
+============================================================ -->
+
+<div class="chef">
+
+<h3>👨🏾‍🍳 Modo Chef</h3>
+
+<label>Público-Alvo (Vocabulário)</label>
+<select id="publico">
+  <option value="infantil">Infantil (6-9)</option>
+  <option value="juvenil">Juvenil (10-14)</option>
+  <option value="adulto">Adulto Geral</option>
+  <option value="literario">Literário/Filosófico</option>
+</select>
+
+<br><br>
+
+<label>Estrutura Narrativa</label>
+<select id="estrutura">
+  <option value="3_atos">3 Atos</option>
+  <option value="5_atos">5 Atos</option>
+  <option value="jornada">Jornada do Herói</option>
+  <option value="filosofica">Arquitetura Filosófica</option>
+</select>
+
+<br><br>
+
+<!-- Novos controles adicionados: Arquetipos, Intensidade Dramática e Valor Universal -->
+<label>Arquétipos</label>
+<select id="arquetipos">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+</select>
+
+<br><br>
+
+<label>Intensidade Dramática</label>
+<select id="drama">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+</select>
+
+<br><br>
+
+<label>Valor Universal</label>
+<select id="valor">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+</select>
+
+</div>
+
+
+<!-- ============================================================
+     SCRIPTS: lógica em JavaScript
+     Comentário: a seguir estão as funções que mantêm estado, montam prompts,
+     chamam APIs externas e calculam métricas locais. Ler bloco-a-bloco.
+============================================================ -->
+
+<script>
+
+/* ============================================================
+   ESTADO GLOBAL CENTRAL
+   Comentário: objeto único 'state' que guarda configuração do motor,
+   parâmetros do "Modo Chef", texto atual e métricas. Usado por várias funções.
+   ============================================================ */
+
+const state = {
+    config:{
+        motor:"gemini",
+        modelo:"",
+        temperatura:0.7,
+        apiKey:""
+    },
+    chef:{
+        publico:"adulto",
+        estrutura:"3_atos",
+        /* Novas propriedades para os controles adicionais do Modo Chef */
+        arquetipos: "0", /* 0-3, aplica arquétipos narrativos */
+        drama: "0",      /* 0-3, intensidade dramática */
+        valor: "0"       /* 0-3, reforço do valor universal */
+    },
+    textoAtual:"",
+    metricas:{
+        flesch:null,
+        nivel:null
+    }
+};
+
+/* ============================================================
+   GERENCIAMENTO DE ETAPAS
+   Comentário: funções e variáveis para controlar qual etapa está ativa
+   (lapidar, estruturar, forjar, auditar) e atualizar a UI visualmente.
+   ============================================================ */
+
+let etapaAtual = "lapidar"
+const etapas = ["lapidar","estruturar","forjar","auditar"]
+
+function atualizarUI(){
+    // Remove a classe 'active' de todas as etapas e aplica apenas na atual
+    etapas.forEach(e=>{
+        document.getElementById(e).classList.remove("active")
+    })
+    document.getElementById(etapaAtual).classList.add("active")
+}
+
+// Aplica estado inicial na UI
+atualizarUI()
+
+function irPara(etapa){
+    // muda a etapa atual e atualiza a UI
+    etapaAtual = etapa
+    atualizarUI()
+}
+
+function proximo(){
+    // avança uma etapa (se houver)
+    let i = etapas.indexOf(etapaAtual)
+    if(i < etapas.length-1){
+        etapaAtual = etapas[i+1]
+        atualizarUI()
+    }
+}
+
+function voltar(){
+    // volta uma etapa (se houver)
+    let i = etapas.indexOf(etapaAtual)
+    if(i > 0){
+        etapaAtual = etapas[i-1]
+        atualizarUI()
+    }
+}
+
+/* ============================================================
+   FUNÇÃO: INSTRUÇÃO LEXICAL (PÚBLICO-ALVO)
+   Comentário: retorna uma string curta que orienta o modelo quanto ao vocabulário
+   usado, dependendo do público selecionado.
+   ============================================================ */
+
+function gerarInstrucaoLexical(publico) {
+  switch (publico) {
+    case "infantil":
+      return "Use vocabulário simples, conte a história para crianças de 4 anos a 6 anos, frases curtas e palavras concretas.";
+    case "juvenil":
+      return "Use linguagem acessível, evitando termos técnicos complexos.";
+    case "adulto":
+      return "Use linguagem clara com liberdade moderada de abstração.";
+    case "literario":
+      return "Permita vocabulário sofisticado, ritmo elaborado e metáforas densas.";
+    default:
+      return "";
+  }
+}
+
+/* ============================================================
+   FUNÇÃO: ESTRUTURA NARRATIVA
+   Comentário: escolhe instruções de estrutura (3 atos, 5 atos, Jornada etc.)
+   que serão adicionadas ao prompt quando aplicável.
+   ============================================================ */
+
+function gerarInstrucaoEstrutura(estrutura){
+    // Antes: a função retornava apenas uma nota estrutural curta.
+    // Problema: modelos podem interpretar isso como um pedido de análise
+    // ou como uma instrução vaga. Aqui retornamos uma instrução prescritiva
+    // que pede explicitamente uma REESCRITA no formato desejado (roteiro),
+    // incluindo orientação sobre atos, cenas e diálogos.
+
+    if(estrutura === "3_atos")
+        return "Reescreva o texto abaixo como um ROTEIRO em 3 atos.\n\n" +
+               "- Identifique e rotule cada ato (ATO I, ATO II, ATO III).\n" +
+               "- Dentro de cada ato, apresente cenas numeradas (Cena 1, Cena 2, ...).\n" +
+               "- Para cada cena, inclua: breve descrição de cenário/ação e blocos de diálogo formatados como: Personagem: \"falas\".\n" +
+               "- Mantenha ritmo dramático claro, indique pontos de virada e clímax.\n"
+
+    if(estrutura === "5_atos")
+        return "Reescreva o texto abaixo como um ROTEIRO em 5 atos (Exposição, Incidente, Clímax, Queda, Desfecho).\n\n" +
+               "- Rotule cada ato e inclua cenas com descrições e diálogos.\n" +
+               "- Realce o Incidente incitante e o Clímax com detalhes de ação e emoção.\n"
+
+    if(estrutura === "jornada")
+        return "Reescreva o texto abaixo como um ROTEIRO organizado segundo a Jornada do Herói.\n\n" +
+               "- Marque etapas como Chamado, Recusa, Encontro com o Mentor, Provação, Apogeu, Retorno, etc.\n" +
+               "- Para cada etapa, forneça cenas curtas com descrição e diálogo.\n"
+
+    if(estrutura === "filosofica")
+        return "Reescreva o texto abaixo como um ROTEIRO com arquitetura filosófica: apresentar uma pergunta central, explorar conflito moral, levar a uma revelação e finalizar com síntese.\n\n" +
+               "- Use diálogos que expressem posições filosóficas dos personagens e cenas que ilustrem o conflito.\n"
+}
+
+/* ============================================================
+   MONTAGEM DO PROMPT
+   Comentário: função central que recolhe valores do DOM (motor, modelo, temp, apiKey,
+   opções do chef) e monta o prompt que será enviado ao modelo.
+   Observação importante: a API key é lida aqui do input e usada em chamadas posteriores.
+   ============================================================ */
+
+function montarPrompt(texto){
+
+    // Atualiza o state com os valores atuais do DOM (parâmetros gerais)
+    state.config.motor = document.getElementById("motor").value
+    state.config.modelo = document.getElementById("modelo").value
+    state.config.temperatura = parseFloat(document.getElementById("temperatura").value)
+    state.config.apiKey = document.getElementById("apikey").value
+
+    // Parâmetros do Modo Chef (incluem os novos controles)
+    state.chef.publico = document.getElementById("publico").value
+    state.chef.estrutura = document.getElementById("estrutura").value
+
+    // lê os novos controles do Modo Chef, quando presentes no DOM
+    const arqEl = document.getElementById("arquetipos")
+    const dramaEl = document.getElementById("drama")
+    const valorEl = document.getElementById("valor")
+    if(arqEl) state.chef.arquetipos = arqEl.value
+    if(dramaEl) state.chef.drama = dramaEl.value
+    if(valorEl) state.chef.valor = valorEl.value
+
+    let prompt = texto
+
+    /*
+      Lógica de composição do prompt:
+      - Se estivermos em 'lapidar' ou 'forjar', queremos aplicar as instruções do Modo Chef
+        (arquétipos, intensidade dramática e valor universal). Essas instruções são
+        concatenadas e pré-pendidas ao texto original para orientar o modelo.
+      - Se estivermos em 'estruturar', substituímos o prompt por uma instrução de estrutura.
+      - Se estivermos em 'forjar', após as instruções do chef também adicionamos a instrução
+        lexical (público-alvo) para guiar vocabulário e tom.
+    */
+    if(etapaAtual === "lapidar" || etapaAtual === "forjar"){
+        let chefInstrucao = ""
+
+        const arq = parseInt(state.chef.arquetipos || "0")
+        const drama = parseInt(state.chef.drama || "0")
+        const valor = parseInt(state.chef.valor || "0")
+
+        if(arq > 0){
+            chefInstrucao += `Aplicar arquétipos com intensidade ${arq}.\n`;
+        }
+        if(drama > 0){
+            chefInstrucao += `Intensidade dramática nível ${drama}.\n`;
+        }
+        if(valor > 0){
+            chefInstrucao += `Reforçar valor universal nível ${valor}.\n`;
+        }
+
+        if(chefInstrucao.trim().length > 0){
+            prompt = chefInstrucao + "\n\n" + prompt
+        }
+    }
+
+    // Etapa de estruturação: instrução específica para reestruturar o texto
+    if(etapaAtual === "estruturar"){
+        prompt = gerarInstrucaoEstrutura(state.chef.estrutura) + "\n\n" + texto
+    }
+
+    // Em 'forjar', além das instruções do Chef, adicionamos a instrução lexical
+    if(etapaAtual === "forjar"){
+        prompt += "\n\n" + gerarInstrucaoLexical(state.chef.publico)
+    }
+
+    // Em 'auditar' construímos um pedido de avaliação ao modelo
+    if(etapaAtual === "auditar"){
+        prompt = "Avalie estrutura, emoção e clareza narrativa.\n\n" + texto
+    }
+
+    return prompt
+}
+
+/* ============================================================
+   CHAMADA GEMINI
+   Comentário: função que faz POST para o endpoint Google Generative Language
+   e retorna o texto candidato. Repare que usa state.config.apiKey no query param.
+   ============================================================ */
+
+async function chamarGemini(prompt){
+
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${state.config.modelo}:generateContent?key=${state.config.apiKey}`,
+        {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body:JSON.stringify({
+                contents:[{ parts:[{ text: prompt }] }],
+                generationConfig:{
+                    temperature: state.config.temperatura
+                }
+            })
+        }
+    )
+
+    const data = await response.json()
+
+    // Retorna o primeiro candidato de texto (assume que exista)
+    return data.candidates[0].content.parts[0].text
+}
+
+/* ============================================================
+   CHAMADA OPENAI
+   Comentário: função alternativa que usa o endpoint de Chat Completions da OpenAI.
+   Usa Authorization: Bearer <API_KEY>. Retorna o conteúdo da primeira escolha.
+   ============================================================ */
+
+async function chamarOpenAI(prompt){
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer " + state.config.apiKey
+        },
+        body:JSON.stringify({
+            model: state.config.modelo,
+            messages:[
+                { role:"system", content:"Você é um roteirista profissional." },
+                { role:"user", content: prompt }
+            ],
+            temperature: state.config.temperatura
+        })
+    })
+
+    const data = await response.json()
+    return data.choices[0].message.content
+}
+
+/* ============================================================
+   EXECUTAR (fluxo principal quando usuário clica em Executar)
+   Comentário: monta o prompt, mostra "Processando..." e chama o motor
+   escolhido (Gemini ou OpenAI). O resultado é salvo em state.textoAtual
+   e exibido no DOM.
+   ============================================================ */
+
+async function executar(){
+
+    const texto = document.getElementById("texto").value
+    const prompt = montarPrompt(texto)
+
+    const resEl = document.getElementById('resultado')
+    if(resEl) resEl.value = "Processando..."
+
+    let resposta
+
+    if(state.config.motor === "gemini")
+        resposta = await chamarGemini(prompt)
+    else
+        resposta = await chamarOpenAI(prompt)
+
+    // Atualiza estado e UI com o texto retornado
+    state.textoAtual = resposta
+    if(resEl) resEl.value = resposta
+}
+
+/* ============================================================
+   FLESCH PORTUGUÊS (MARTINS)
+   Comentário: implementação local do índice de legibilidade de Flesch adaptado
+   para Português. Calcula frases, palavras, sílabas, e retorna um índice numérico.
+   ============================================================ */
+
+function calcularFlesch(texto) {
+
+  // Separa frases por pontuação (., !, ?). Filtra entradas vazias.
+  const frases = texto.split(/[.!?]+/).filter(f => f.trim().length > 0);
+  const palavras = texto.split(/\s+/).filter(p => p.length > 0);
+
+  let totalSilabas = 0;
+
+  // aproximação de sílabas: conta grupos de vogais (incluindo acentuadas)
+  palavras.forEach(palavra => {
+    const silabas = palavra
+      .toLowerCase()
+      .replace(/[^a-záéíóúâêôãõç]/g, '')
+      .match(/[aeiouáéíóúâêôãõ]+/g);
+    totalSilabas += silabas ? silabas.length : 1; // fallback 1 sílaba
+  });
+
+  const ASL = palavras.length / frases.length; // average sentence length
+  const ASW = totalSilabas / palavras.length; // average syllables per word
+
+  const flesch = 248.835 - (1.015 * ASL) - (84.6 * ASW);
+
+  return flesch.toFixed(2);
+}
+
+function classificarFlesch(indice) {
+  // Classificação simples baseada no índice calculado
+  if (indice >= 75) return "Muito Fácil";
+  if (indice >= 50) return "Médio";
+  if (indice >= 25) return "Difícil";
+  return "Muito Difícil";
+}
+
+/* ============================================================
+   BOTÃO MANUAL DE LEGIBILIDADE
+   Comentário: ao clicar, se existir texto gerado, calcula e mostra o índice.
+   ============================================================ */
+
+function analisarLegibilidade(){
+
+    // Use o texto atualmente presente no textarea de resultado (pode ter sido
+    // editado manualmente pelo autor). Se não houver valor no textarea, usa
+    // state.textoAtual como fallback.
+    const resEl = document.getElementById('resultado')
+    const texto = (resEl && resEl.value && resEl.value.trim()) ? resEl.value : (state.textoAtual || '')
+    if(!texto || texto.trim().length === 0){
+        alert("Execute primeiro para gerar texto ou escreva algo no campo de resultado.")
+        return
+    }
+
+    const indice = calcularFlesch(texto)
+    const nivel = classificarFlesch(indice)
+
+    state.metricas.flesch = indice
+    state.metricas.nivel = nivel
+
+    document.getElementById("resultadoFlesch").innerText =
+        `Índice: ${indice} | Nível: ${nivel}`
+}
+
+/* ============================================================
+   Função: saveCurrentPhaseAsMD
+
+   Objetivo: salva o texto visível no textarea como um arquivo Markdown via
+   download. Implementação intencionalmente simples (compatível com todos
+   os navegadores modernos) — evita File System Access API para prevenir
+   problemas de compatibilidade/crash durante os testes iniciais.
+   ============================================================ */
+function saveCurrentPhaseAsMD(){
+    const resEl = document.getElementById('resultado')
+    const text = (resEl && resEl.value) ? resEl.value : (state.textoAtual || '')
+    if(!text || text.trim().length === 0){
+        alert('Nada para salvar. Execute ou escreva algo no resultado.')
+        return
+    }
+    // Sugere um nome padrão: etapaAtual.md
+    const suggested = etapaAtual + '.md'
+    const name = window.prompt('Nome do arquivo (sem extensão)', etapaAtual)
+    if(!name) return
+    const filename = name.trim() + '.md'
+    const blob = new Blob([text], {type: 'text/markdown'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+}
+
+// Listener mínimo para manter state.textoAtual sincronizado quando o autor
+// edita diretamente o textarea de resultado.
+(function attachResultadoListener(){
+    const el = document.getElementById('resultado')
+    if(!el) return
+    el.addEventListener('input', ()=>{
+        state.textoAtual = el.value
+    })
+})()
+
+</script>
+
+</body>
+</html>

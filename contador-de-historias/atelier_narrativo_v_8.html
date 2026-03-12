@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier Narrativo V8.0</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1e2330;
+      --text: #ece7df;
+      --muted: #a8a39a;
+      --gold: #c8a96b;
+      --line: #2b3140;
+      --accent: #7d92ff;
+      --danger: #b96a6a;
+      --success: #6aa07a;
+      --shadow: 0 18px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(200,169,107,.08), transparent 35%),
+        linear-gradient(180deg, #0c0f14 0%, #10131a 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 40px 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .78rem;
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.15;
+      font-weight: 700;
+    }
+
+    h1 { font-size: clamp(2rem, 4vw, 3.6rem); }
+    h2 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); }
+    h3 { font-size: 1.08rem; }
+
+    p { margin: 0 0 14px; color: var(--muted); }
+
+    .lead {
+      font-size: 1.08rem;
+      max-width: 820px;
+      color: #d7d1c8;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(125,146,255,.08);
+      color: #dfe5ff;
+      margin-bottom: 14px;
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .list li + li { margin-top: 8px; }
+
+    .quote {
+      border-left: 3px solid var(--gold);
+      padding-left: 14px;
+      margin-top: 12px;
+      color: #dfd8cd;
+      font-style: italic;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow .step {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 140px;
+      position: relative;
+    }
+
+    .flow .step strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .step small {
+      color: var(--gold);
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .highlight {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .lapidar-box {
+      background: linear-gradient(180deg, rgba(200,169,107,.07), rgba(125,146,255,.05));
+      border: 1px solid rgba(200,169,107,.22);
+    }
+
+    .rule-number {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(200,169,107,.12);
+      border: 1px solid rgba(200,169,107,.28);
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .subgrid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .question {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #141924;
+      border: 1px solid var(--line);
+      color: #ddd6ca;
+    }
+
+    .example {
+      background: #121720;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .example code {
+      display: block;
+      white-space: pre-wrap;
+      color: #e7dfd1;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92rem;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: rgba(106,160,122,.08);
+      border: 1px solid rgba(106,160,122,.22);
+      color: #d8e8db;
+    }
+
+    @media (max-width: 980px) {
+      .grid-2, .grid-3, .subgrid, .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Atelier Narrativo • Contador de Histórias • V8.0</div>
+      <h1>Mapa prático com as Três Regras de Ouro e a Regra das 5 Perguntas integrada ao Lapidar</h1>
+      <p class="lead">
+        Este arquivo transforma a filosofia do Atelier em estrutura operacional. A história nasce no <span class="highlight">Lapidar</span>,
+        ganha direção no <span class="highlight">Chef</span>, forma em <span class="highlight">Estruturar</span>, força em <span class="highlight">Forjar</span>
+        e rigor em <span class="highlight">Auditar</span>. Agora, o coração do sistema passa a incluir as <span class="highlight">Três Regras de Ouro das Histórias</span>
+        e a <span class="highlight">Regra das 5 Perguntas</span> como motor inicial da narrativa.
+      </p>
+    </section>
+
+    <section class="section card">
+      <div class="tag">Fluxo central do Atelier</div>
+      <div class="flow">
+        <div class="step">
+          <small>01</small>
+          <strong>Ideia</strong>
+          <p>Intuição, tema, imagem, pergunta ou conflito em estado bruto.</p>
+        </div>
+        <div class="step lapidar-box">
+          <small>02</small>
+          <strong>Lapidar</strong>
+          <p>Transforma ideia vaga em história viva usando as 5 perguntas e as Regras de Ouro.</p>
+        </div>
+        <div class="step">
+          <small>03</small>
+          <strong>Chef</strong>
+          <p>Escolhe os temperos: ponto de vista, arquétipos, intensidade, valor universal e complexidade.</p>
+        </div>
+        <div class="step">
+          <small>04</small>
+          <strong>Estruturar</strong>
+          <p>Organiza a progressão em atos, tensão e viradas.</p>
+        </div>
+        <div class="step">
+          <small>05</small>
+          <strong>Forjar + Auditar</strong>
+          <p>Forja a imagem, o subtexto e o ritmo. Audita clareza, retenção e impacto humano.</p>
+        </div>
+      </div>
+
+      <div class="subgrid" style="margin-top:22px;">
+        <div class="card" style="background:#121720; box-shadow:none;">
+          <h3>Painel rápido do sistema</h3>
+          <ul class="list">
+            <li><strong>Entrada:</strong> ideia, tema, imagem, conflito ou pergunta.</li>
+            <li><strong>Núcleo:</strong> Lapidar define humanidade, desejo, conflito, escolha e imagem.</li>
+            <li><strong>Direção:</strong> Chef define como a história será percebida.</li>
+            <li><strong>Forma:</strong> Estruturar organiza o arco dramático.</li>
+            <li><strong>Cinema:</strong> Forjar converte abstração em cena.</li>
+            <li><strong>Controle:</strong> Auditar mede clareza, força e retenção.</li>
+          </ul>
+        </div>
+        <div class="card" style="background:#121720; box-shadow:none;">
+          <h3>Regra prática de uso</h3>
+          <p>O sistema agora funciona em dois eixos complementares:</p>
+          <ul class="list">
+            <li><strong>Eixo estrutural:</strong> Ideia → Lapidar → Estruturar → Forjar → Auditar</li>
+            <li><strong>Eixo de direção:</strong> Chef</li>
+          </ul>
+          <p>Assim, a história nasce com espinha dorsal e depois recebe tom, ponto de vista e densidade.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-3">
+        <article class="card">
+          <div class="rule-number">1</div>
+          <h2>Primeira Regra de Ouro</h2>
+          <p><strong>Uma boa história mostra um ser humano diante de uma escolha que revela quem ele realmente é.</strong></p>
+          <p>A escolha é o momento em que a história deixa de ser relato e se torna revelação humana.</p>
+          <div class="quote">Não é o evento que nos prende. É o instante em que alguém decide quem será.</div>
+        </article>
+
+        <article class="card">
+          <div class="rule-number">2</div>
+          <h2>Segunda Regra de Ouro</h2>
+          <p><strong>Uma história só toca o público quando o que está em jogo é humano e universal.</strong></p>
+          <p>Sem consequência humana, não existe profundidade. O público precisa sentir que aquilo também fala dele.</p>
+          <div class="quote">Toda história forte toca liberdade, dignidade, coragem, amor, culpa, pertencimento ou redenção.</div>
+        </article>
+
+        <article class="card">
+          <div class="rule-number">3</div>
+          <h2>Terceira Regra de Ouro</h2>
+          <p><strong>Boas histórias são lembradas porque mostram uma imagem clara que carrega uma verdade humana.</strong></p>
+          <p>O cérebro lembra imagens. Quando a verdade se torna cena, a história permanece.</p>
+          <div class="quote">Explique menos. Mostre uma porta aberta, uma mão soltando, um homem sozinho no topo.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section card lapidar-box">
+      <div class="tag">Implantação prática no módulo Lapidar</div>
+      <h2>Lapidar agora passa a funcionar com a Regra das 5 Perguntas</h2>
+      <p>
+        A Regra das 5 Perguntas não é um módulo separado. Ela é a <span class="highlight">mecânica interna do Lapidar</span>.
+        Seu papel é pegar uma ideia vaga e convertê-la em personagem, desejo, conflito, escolha e imagem.
+      </p>
+
+      <div class="subgrid">
+        <div>
+          <h3>As 5 perguntas operacionais</h3>
+          <div class="question-list">
+            <div class="question"><strong>1. Quem é o ser humano da história?</strong><br>Define o centro emocional.</div>
+            <div class="question"><strong>2. O que ele deseja?</strong><br>Define movimento, falta e direção dramática.</div>
+            <div class="question"><strong>3. O que o impede?</strong><br>Define obstáculo, tensão e conflito.</div>
+            <div class="question"><strong>4. Que escolha ele precisa fazer?</strong><br>Ativa a Primeira Regra de Ouro.</div>
+            <div class="question"><strong>5. Que imagem representa essa verdade?</strong><br>Ativa a Terceira Regra de Ouro.</div>
+          </div>
+        </div>
+
+        <div>
+          <h3>O que nasce dessas respostas</h3>
+          <ul class="list">
+            <li><strong>Personagem humano</strong> — alguém que pode ser sentido.</li>
+            <li><strong>Desejo claro</strong> — algo que move a narrativa.</li>
+            <li><strong>Conflito concreto</strong> — algo que resiste.</li>
+            <li><strong>Escolha decisiva</strong> — revelação moral ou emocional.</li>
+            <li><strong>Imagem central</strong> — memória visual da história.</li>
+            <li><strong>Valor universal</strong> — o que está em jogo de verdade.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>Exemplo de Lapidar em ação</h3>
+        <code>IDEIA: Liberdade
+
+1. Quem é o ser humano da história?
+Um homem que vive há anos dentro de uma caverna.
+
+2. O que ele deseja?
+Entender por que sente que algo está errado.
+
+3. O que o impede?
+Todos ao redor juram que o mundo se resume às sombras na parede.
+
+4. Que escolha ele precisa fazer?
+Virar-se e olhar para a luz, mesmo correndo o risco de perder tudo o que conhece.
+
+5. Que imagem representa essa verdade?
+Ele saindo da caverna pela primeira vez, ferido pela claridade.
+
+VALOR UNIVERSAL EM JOGO:
+Liberdade.
+
+RESULTADO:
+A ideia deixou de ser conceito e se tornou história.</code>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-2">
+        <article class="card">
+          <div class="tag">Ligação entre as regras e o fluxo</div>
+          <h2>Como as Três Regras entram no Atelier</h2>
+          <ul class="list">
+            <li><strong>Primeira Regra de Ouro</strong> entra no <strong>Lapidar</strong> por meio da pergunta sobre a escolha.</li>
+            <li><strong>Segunda Regra de Ouro</strong> entra no <strong>Lapidar</strong> e se conecta ao <strong>Chef</strong> por meio do Valor Universal.</li>
+            <li><strong>Terceira Regra de Ouro</strong> nasce no <strong>Lapidar</strong> e ganha acabamento no <strong>Forjar</strong>.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <div class="tag">Resumo operacional</div>
+          <h2>Nova lógica prática do sistema</h2>
+          <ul class="list">
+            <li><strong>Ideia</strong> traz o impulso inicial.</li>
+            <li><strong>Lapidar</strong> transforma a ideia em história através das 5 perguntas.</li>
+            <li><strong>Chef</strong> decide como essa história será contada.</li>
+            <li><strong>Estruturar</strong> organiza a progressão dramática.</li>
+            <li><strong>Forjar</strong> converte conceito em imagem, ritmo e subtexto.</li>
+            <li><strong>Auditar</strong> testa clareza, humanidade e retenção.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-2">
+        <article class="card">
+          <div class="tag">Chef • Temperos narrativos</div>
+          <h2>Integração do Chef ao restante da interface</h2>
+          <p>Depois que o Lapidar entrega uma história viva, o Chef define sua direção narrativa.</p>
+          <ul class="list">
+            <li><strong>Ponto de Vista:</strong> narrador, protagonista, antagonista, testemunha, coletivo, primeira pessoa, terceira pessoa.</li>
+            <li><strong>Complexidade:</strong> Nível 1 — clara, Nível 2 — camadas, Nível 3 — filosófica.</li>
+            <li><strong>Arquétipos:</strong> herói, mentor, rebelde, guardião, sábio, inocente.</li>
+            <li><strong>Intensidade dramática:</strong> baixa, média, alta.</li>
+            <li><strong>Valor universal:</strong> liberdade, dignidade, coragem, redenção, persistência, arrogância.</li>
+          </ul>
+          <div class="quote">O Chef não cria a história. Ele decide a forma como o público vai senti-la.</div>
+        </article>
+
+        <article class="card">
+          <div class="tag">Estruturar • Esqueleto dramático</div>
+          <h2>Integração do Estruturar</h2>
+          <p>Com a direção narrativa definida, a interface passa a organizar a progressão emocional em três atos.</p>
+          <ul class="list">
+            <li><strong>Ato 1 — Abertura:</strong> apresenta a situação, a falta e o impulso dramático.</li>
+            <li><strong>Ato 2 — Conflito:</strong> pressiona o personagem, amplia risco e dificulta a escolha.</li>
+            <li><strong>Ato 3 — Transformação:</strong> entrega consequência, revelação ou ruptura.</li>
+          </ul>
+          <div class="quote">Estruturar impede que uma boa ideia morra no meio do caminho.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-2">
+        <article class="card">
+          <div class="tag">Forjar • Linguagem cinematográfica</div>
+          <h2>Integração do Forjar</h2>
+          <p>Forjar pega a estrutura e a transforma em experiência visual, rítmica e emocional.</p>
+          <ul class="list">
+            <li><strong>Imagem visual:</strong> traduz conceitos em cena memorável.</li>
+            <li><strong>Ritmo narrativo:</strong> alterna tensão, pausa e revelação.</li>
+            <li><strong>Subtexto:</strong> mostra sem explicar demais.</li>
+            <li><strong>Silêncio:</strong> cria peso, respiração e presença.</li>
+            <li><strong>Contraste emocional:</strong> luz e sombra humana dentro da mesma história.</li>
+          </ul>
+          <div class="quote">É aqui que a Terceira Regra de Ouro ganha corpo e permanência.</div>
+        </article>
+
+        <article class="card">
+          <div class="tag">Auditar • Controle de qualidade</div>
+          <h2>Integração do Auditar</h2>
+          <p>Auditar verifica se a história ficou forte sem perder clareza.</p>
+          <ul class="list">
+            <li><strong>Clareza emocional:</strong> o sentimento central é compreensível?</li>
+            <li><strong>Clareza narrativa:</strong> a progressão pode ser seguida sem confusão?</li>
+            <li><strong>Intensidade dramática:</strong> existe tensão suficiente?</li>
+            <li><strong>Valor humano:</strong> a história toca algo universal?</li>
+            <li><strong>Potencial de retenção:</strong> existe curiosidade para continuar?</li>
+          </ul>
+          <div class="quote">Auditar protege o Atelier contra excesso, confusão e vazio emocional.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section card">
+      <div class="tag">Trecho pronto para o código / documentação</div>
+      <h2>Texto consolidado para implantação no Atelier Narrativo</h2>
+      <p>
+        <strong>Lapidar</strong> é o módulo responsável por transformar uma ideia bruta em história viva. A partir desta versão,
+        ele passa a operar com a <strong>Regra das 5 Perguntas</strong>: quem é o ser humano da história, o que ele deseja,
+        o que o impede, que escolha ele precisa fazer e que imagem representa essa verdade. Essas perguntas ativam as
+        <strong>Três Regras de Ouro das Histórias</strong>: a escolha que revela quem alguém realmente é, o valor humano e universal
+        que está em jogo, e a imagem concreta que grava a narrativa na memória.
+      </p>
+      <p>
+        Com isso, o Atelier garante que cada história nasça com <strong>humanidade</strong>, <strong>conflito</strong>,
+        <strong>escolha</strong>, <strong>valor universal</strong> e <strong>imagem memorável</strong> antes mesmo de seguir para os próximos módulos.
+      </p>
+    </section>
+
+    <div class="footer-note">
+      Esta implantação já deixa o HTML pronto como base visual e conceitual para a V8.0. O próximo passo natural é integrar isso ao painel do Chef,
+      ao Estruturar e ao Auditar, mantendo tudo sob a mesma linguagem visual e narrativa.
+    </div>
+  </main>
+</body>
+</html>

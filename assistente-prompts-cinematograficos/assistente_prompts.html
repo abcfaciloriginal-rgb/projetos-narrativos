@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Prompts Cinematográficos - Somos Humanos</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Ícones SVG simples
+        const Camera = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
+        );
+
+        const Film = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
+            </svg>
+        );
+
+        const Eye = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        );
+
+        const Sparkles = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 3v18M3 12h18M7.05 7.05l9.9 9.9M16.95 7.05l-9.9 9.9"/>
+            </svg>
+        );
+
+        const Check = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>
+        );
+
+        const Copy = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+        );
+
+        const Download = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+        );
+
+        function CinematicPromptAssistant() {
+            const [step, setStep] = useState(1);
+            const [copied, setCopied] = useState(false);
+            const [formData, setFormData] = useState({
+                sceneDescription: '',
+                emotion: '',
+                character: '',
+                setting: '',
+                cameraMovement: '',
+                cameraAngle: '',
+                lighting: '',
+                focus: '',
+                speed: '',
+                style: '',
+            });
+
+            const cameraMovements = [
+                { id: 'static', name: 'Estático', desc: 'Sem movimento, foco total na composição', tech: 'static camera' },
+                { id: 'dolly-in', name: 'Aproximação', desc: 'Câmera se aproxima do sujeito', tech: 'camera dolly in' },
+                { id: 'dolly-out', name: 'Afastamento', desc: 'Câmera se afasta revelando contexto', tech: 'camera dolly out' },
+                { id: 'pan', name: 'Panorâmica', desc: 'Câmera rotaciona horizontalmente', tech: 'camera pan' },
+                { id: 'tilt-up', name: 'Inclinar p/ Cima', desc: 'Câmera rotaciona para cima', tech: 'camera tilt up' },
+                { id: 'tilt-down', name: 'Inclinar p/ Baixo', desc: 'Câmera rotaciona para baixo', tech: 'camera tilt down' },
+                { id: 'orbit', name: 'Órbita', desc: 'Câmera circula ao redor', tech: 'camera orbits around' },
+                { id: 'truck', name: 'Tracking Lateral', desc: 'Câmera desliza lateralmente', tech: 'camera trucks' },
+                { id: 'rack-focus', name: 'Mudança de Foco', desc: 'Foco muda entre elementos', tech: 'rack focus' },
+            ];
+
+            const cameraAngles = [
+                { id: 'eye-level', name: 'Altura dos Olhos', desc: 'Perspectiva natural', tech: 'eye level shot' },
+                { id: 'low', name: 'Ângulo Baixo', desc: 'De baixo para cima, imponente', tech: 'low angle shot' },
+                { id: 'high', name: 'Ângulo Alto', desc: 'De cima para baixo, vulnerável', tech: 'high angle shot' },
+                { id: 'birds-eye', name: 'Vista de Pássaro', desc: 'Diretamente de cima', tech: 'bird\'s eye view' },
+                { id: 'close-up', name: 'Close-up', desc: 'Muito próximo, intimidade', tech: 'close-up shot' },
+                { id: 'medium', name: 'Plano Médio', desc: 'Da cintura para cima', tech: 'medium shot' },
+                { id: 'wide', name: 'Plano Aberto', desc: 'Mostra o ambiente completo', tech: 'wide shot' },
+                { id: 'over-shoulder', name: 'Sobre o Ombro', desc: 'Por trás de um personagem', tech: 'over the shoulder shot' },
+            ];
+
+            const lightingStyles = [
+                { id: 'natural', name: 'Natural', tech: 'natural lighting' },
+                { id: 'golden', name: 'Hora Dourada', tech: 'golden hour lighting' },
+                { id: 'blue-hour', name: 'Hora Azul', tech: 'blue hour lighting' },
+                { id: 'dramatic', name: 'Dramática', tech: 'dramatic lighting' },
+                { id: 'soft', name: 'Suave', tech: 'soft diffused lighting' },
+                { id: 'neon', name: 'Neon', tech: 'neon lighting' },
+                { id: 'backlit', name: 'Contraluz', tech: 'backlit' },
+                { id: 'cinematic', name: 'Cinematográfica', tech: 'cinematic lighting' },
+            ];
+
+            const cinematicStyles = [
+                { id: 'documentary', name: 'Documentário', tech: 'documentary style, realistic, raw' },
+                { id: 'narrative', name: 'Narrativa Cinematográfica', tech: 'cinematic narrative film style' },
+                { id: 'noir', name: 'Film Noir', tech: 'film noir style, high contrast, dramatic shadows' },
+                { id: 'scifi', name: 'Sci-Fi', tech: 'science fiction cinematic style' },
+                { id: 'drama', name: 'Drama Intenso', tech: 'intense dramatic film style' },
+                { id: 'indie', name: 'Indie Film', tech: 'indie film aesthetic, artistic' },
+            ];
+
+            const generatePrompt = () => {
+                const parts = [];
+                
+                if (formData.sceneDescription) {
+                    parts.push(formData.sceneDescription);
+                }
+
+                if (formData.character) {
+                    parts.push(`featuring ${formData.character}`);
+                }
+
+                if (formData.setting) {
+                    parts.push(`in ${formData.setting}`);
+                }
+
+                const angle = cameraAngles.find(a => a.id === formData.cameraAngle);
+                if (angle) {
+                    parts.push(angle.tech);
+                }
+
+                const movement = cameraMovements.find(m => m.id === formData.cameraMovement);
+                if (movement) {
+                    const speed = formData.speed === 'fast' ? 'fast ' : formData.speed === 'slow' ? 'slow smooth ' : '';
+                    parts.push(`${speed}${movement.tech}`);
+                }
+
+                if (formData.focus) {
+                    parts.push(formData.focus);
+                }
+
+                const lighting = lightingStyles.find(l => l.id === formData.lighting);
+                if (lighting) {
+                    parts.push(lighting.tech);
+                }
+
+                if (formData.emotion) {
+                    parts.push(`${formData.emotion} atmosphere`);
+                }
+
+                const style = cinematicStyles.find(s => s.id === formData.style);
+                if (style) {
+                    parts.push(style.tech);
+                }
+
+                parts.push('professional cinematography, 8K, ultra detailed, photorealistic');
+
+                return parts.filter(p => p).join(', ');
+            };
+
+            const copyToClipboard = () => {
+                navigator.clipboard.writeText(generatePrompt());
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            const downloadPrompt = () => {
+                const prompt = generatePrompt();
+                const blob = new Blob([prompt], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'prompt-somos-humanos.txt';
+                a.click();
+            };
+
+            const progressSteps = [
+                { num: 1, name: 'Cena', icon: Camera },
+                { num: 2, name: 'Câmera', icon: Film },
+                { num: 3, name: 'Iluminação', icon: Eye },
+                { num: 4, name: 'Estilo', icon: Sparkles },
+                { num: 5, name: 'Resultado', icon: Check }
+            ];
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4">
+                    {/* Header */}
+                    <div className="max-w-6xl mx-auto mb-8">
+                        <div className="text-center py-8">
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <Film />
+                                <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                    Assistente de Prompts Cinematográficos
+                                </h1>
+                            </div>
+                            <p className="text-xl text-purple-200 mb-2">Canal: Somos Humanos</p>
+                            <p className="text-gray-400">Transforme suas ideias de storytelling em prompts técnicos profissionais</p>
+                        </div>
+                    </div>
+
+                    {/* Progress Steps */}
+                    <div className="max-w-6xl mx-auto mb-8">
+                        <div className="flex justify-between items-center">
+                            {progressSteps.map((s, i) => (
+                                <React.Fragment key={s.num}>
+                                    <div className="flex flex-col items-center">
+                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all ${
+                                            step >= s.num 
+                                                ? 'bg-purple-500 border-purple-400 scale-110' 
+                                                : 'bg-slate-800 border-slate-700'
+                                        }`}>
+                                            <s.icon />
+                                        </div>
+                                        <span className={`mt-2 text-sm ${step >= s.num ? 'text-purple-300' : 'text-gray-500'}`}>
+                                            {s.name}
+                                        </span>
+                                    </div>
+                                    {i < 4 && (
+                                        <div className={`flex-1 h-1 mx-2 rounded transition-all ${
+                                            step > s.num ? 'bg-purple-500' : 'bg-slate-700'
+                                        }`} />
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="max-w-6xl mx-auto">
+                        <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-8 shadow-2xl">
+                            
+                            {/* Step 1: Scene Description */}
+                            {step === 1 && (
+                                <div className="space-y-6" style={{animation: 'fadeIn 0.5s ease-in'}}>
+                                    <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                                        <Camera />
+                                        Conte sua história
+                                    </h2>
+                                    
+                                    <div>
+                                        <label className="block text-lg font-semibold mb-2">Descreva a cena (como storyteller)</label>
+                                        <textarea
+                                            className="w-full h-32 bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 text-white placeholder-gray-500"
+                                            placeholder="Ex: Um homem solitário caminha por uma rua chuvosa à noite, com luzes de neon refletindo nas poças..."
+                                            value={formData.sceneDescription}
+                                            onChange={(e) => setFormData({...formData, sceneDescription: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-lg font-semibold mb-2">Personagem(ns)</label>
+                                            <input
+                                                type="text"
+                                                className="w-full bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 text-white placeholder-gray-500"
+                                                placeholder="Ex: mulher asiática de 30 anos, cabelo curto"
+                                                value={formData.character}
+                                                onChange={(e) => setFormData({...formData, character: e.target.value})}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg font-semibold mb-2">Cenário/Ambiente</label>
+                                            <input
+                                                type="text"
+                                                className="w-full bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 text-white placeholder-gray-500"
+                                                placeholder="Ex: cidade futurista à noite, ruas molhadas"
+                                                value={formData.setting}
+                                                onChange={(e) => setFormData({...formData, setting: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-lg font-semibold mb-2">Emoção/Atmosfera que quer transmitir</label>
+                                        <input
+                                            type="text"
+                                            className="w-full bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 text-white placeholder-gray-500"
+                                            placeholder="Ex: melancólica, tensa, esperançosa, misteriosa"
+                                            value={formData.emotion}
+                                            onChange={(e) => setFormData({...formData, emotion: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Step 2: Camera Settings */}
+                            {step === 2 && (
+                                <div className="space-y-6" style={{animation: 'fadeIn 0.5s ease-in'}}>
+                                    <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                                        <Film />
+                                        Configurações de Câmera
+                                    </h2>
+
+                                    <div>
+                                        <label className="block text-lg font-semibold mb-3">Ângulo de Câmera</label>
+                                        <div className="grid md:grid-cols-2 gap-3">
+                                            {cameraAngles.map(angle => (
+                                                <button
+                                                    key={angle.id}
+                                                    onClick={() => setFormData({...formData, cameraAngle: angle.id})}
+                                                    className={`p-4 rounded-lg border-2 transition-all text-left ${
+                                                        formData.cameraAngle === angle.id
+                                                            ? 'bg-purple-500/30 border-purple-400 shadow-lg shadow-purple-500/20'
+                                                            : 'bg-slate-900/30 border-slate-700 hover:border-purple-500/50'
+                                                    }`}
+                                                >
+                                                    <div className="font-bold text-lg mb-1">{angle.name}</div>
+                                                    <div className="text-sm text-gray-400">{angle.desc}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-lg font-semibold mb-3">Movimento de Câmera</label>
+                                        <div className="grid md:grid-cols-2 gap-3">
+                                            {cameraMovements.map(movement => (
+                                                <button
+                                                    key={movement.id}
+                                                    onClick={() => setFormData({...formData, cameraMovement: movement.id})}
+                                                    className={`p-4 rounded-lg border-2 transition-all text-left ${
+                                                        formData.cameraMovement === movement.id
+                                                            ? 'bg-purple-500/30 border-purple-400 shadow-lg shadow-purple-500/20'
+                                                            : 'bg-slate-900/30 border-slate-700 hover:border-purple-500/50'
+                                                    }`}
+                                                >
+                                                    <div className="font-bold text-lg mb-1">{movement.name}</div>
+                                                    <div className="text-sm text-gray-400">{movement.desc}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {formData.cameraMovement && formData.cameraMovement !== 'static' && (
+                                        <div>
+                                            <label className="block text-lg font-semibold mb-3">Velocidade do Movimento</label>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {[
+                                                    { id: 'slow', name: 'Lento/Suave', desc: 'Movimento delicado' },
+                                                    { id: 'normal', name: 'Normal', desc: 'Velocidade padrão' },
+                                                    { id: 'fast', name: 'Rápido', desc: 'Movimento dinâmico' },
+                                                ].map(speed => (
+                                                    <button
+                                                        key={speed.id}
+                                                        onClick={() => setFormData({...formData, speed: speed.id})}
+                                                        className={`p-4 rounded-lg border-2 transition-all ${
+                                                            formData.speed === speed.id
+                                                                ? 'bg-purple-500/30 border-purple-400'
+                                                                : 'bg-slate-900/30 border-slate-700 hover:border-purple-500/50'
+                                                        }`}
+                                                    >
+                                                        <div className="font-bold mb-1">{speed.name}</div>
+                                                        <div className="text-xs text-gray-400">{speed.desc}</div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {formData.cameraMovement === 'rack-focus' && (
+                                        <div>
+                                            <label className="block text-lg font-semibold mb-2">Mudança de Foco</label>
+                                            <input
+                                                type="text"
+                                                className="w-full bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 text-white placeholder-gray-500"
+                                                placeholder="Ex: foco muda do rosto para o objeto na mesa ao fundo"
+                                                value={formData.focus}
+                                                onChange={(e) => setFormData({...formData, focus: e.target.value})}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Step 3: Lighting */}
+                            {step === 3 && (
+                                <div className="space-y-6" style={{animation: 'fadeIn 0.5s ease-in'}}>
+                                    <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                                        <Eye />
+                                        Iluminação
+                                    </h2>
+
+                                    <div className="grid md:grid-cols-2 gap-3">
+                                        {lightingStyles.map(lighting => (
+                                            <button
+                                                key={lighting.id}
+                                                onClick={() => setFormData({...formData, lighting: lighting.id})}
+                                                className={`p-6 rounded-lg border-2 transition-all ${
+                                                    formData.lighting === lighting.id
+                                                        ? 'bg-purple-500/30 border-purple-400 shadow-lg shadow-purple-500/20'
+                                                        : 'bg-slate-900/30 border-slate-700 hover:border-purple-500/50'
+                                                }`}
+                                            >
+                                                <div className="font-bold text-xl">{lighting.name}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Step 4: Style */}
+                            {step === 4 && (
+                                <div className="space-y-6" style={{animation: 'fadeIn 0.5s ease-in'}}>
+                                    <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                                        <Sparkles />
+                                        Estilo Cinematográfico
+                                    </h2>
+
+                                    <div className="grid md:grid-cols-2 gap-3">
+                                        {cinematicStyles.map(style => (
+                                            <button
+                                                key={style.id}
+                                                onClick={() => setFormData({...formData, style: style.id})}
+                                                className={`p-6 rounded-lg border-2 transition-all text-left ${
+                                                    formData.style === style.id
+                                                        ? 'bg-purple-500/30 border-purple-400 shadow-lg shadow-purple-500/20'
+                                                        : 'bg-slate-900/30 border-slate-700 hover:border-purple-500/50'
+                                                }`}
+                                            >
+                                                <div className="font-bold text-xl mb-2">{style.name}</div>
+                                                <div className="text-sm text-gray-400">{style.tech}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Step 5: Result */}
+                            {step === 5 && (
+                                <div className="space-y-6" style={{animation: 'fadeIn 0.5s ease-in'}}>
+                                    <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                                        <Check />
+                                        Seu Prompt Cinematográfico
+                                    </h2>
+
+                                    <div className="bg-slate-900/70 rounded-lg p-6 border border-purple-500/30">
+                                        <p className="text-gray-300 leading-relaxed text-lg">
+                                            {generatePrompt()}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={copyToClipboard}
+                                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
+                                        >
+                                            {copied ? (
+                                                <>
+                                                    <Check />
+                                                    Copiado!
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy />
+                                                    Copiar Prompt
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <button
+                                            onClick={downloadPrompt}
+                                            className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 px-6 rounded-lg transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <Download />
+                                            Baixar TXT
+                                        </button>
+                                    </div>
+
+                                    <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-6">
+                                        <h3 className="font-bold text-xl mb-3 text-blue-300">💡 Dicas para Melhor Resultado</h3>
+                                        <ul className="space-y-2 text-gray-300">
+                                            <li className="flex gap-2">
+                                                <span className="text-blue-400">•</span>
+                                                <span>Use este prompt no Midjourney, DALL-E 3, ou Stable Diffusion</span>
+                                            </li>
+                                            <li className="flex gap-2">
+                                                <span className="text-blue-400">•</span>
+                                                <span>Para vídeos, use Runway Gen-3, Pika, ou Cling 2.6</span>
+                                            </li>
+                                            <li className="flex gap-2">
+                                                <span className="text-blue-400">•</span>
+                                                <span>Para consistência de personagem, crie primeiro uma imagem base e use como referência</span>
+                                            </li>
+                                            <li className="flex gap-2">
+                                                <span className="text-blue-400">•</span>
+                                                <span>Adicione parâmetros específicos da ferramenta (ex: --ar 16:9 no Midjourney)</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            setStep(1);
+                                            setFormData({
+                                                sceneDescription: '',
+                                                emotion: '',
+                                                character: '',
+                                                setting: '',
+                                                cameraMovement: '',
+                                                cameraAngle: '',
+                                                lighting: '',
+                                                focus: '',
+                                                speed: '',
+                                                style: '',
+                                            });
+                                        }}
+                                        className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-all"
+                                    >
+                                        Criar Novo Prompt
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Navigation Buttons */}
+                            <div className="flex gap-4 mt-8 pt-8 border-t border-purple-500/20">
+                                {step > 1 && (
+                                    <button
+                                        onClick={() => setStep(step - 1)}
+                                        className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-all"
+                                    >
+                                        ← Voltar
+                                    </button>
+                                )}
+                                {step < 5 && (
+                                    <button
+                                        onClick={() => setStep(step + 1)}
+                                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg shadow-purple-500/30"
+                                    >
+                                        Próximo →
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Tips Section */}
+                        {step < 5 && (
+                            <div className="mt-6 bg-slate-800/30 backdrop-blur-xl rounded-xl border border-purple-500/20 p-6">
+                                <h3 className="font-bold text-lg mb-3 text-purple-300">💡 Dica de Storyteller</h3>
+                                <p className="text-gray-300">
+                                    {step === 1 && "Não pense em termos técnicos ainda. Descreva o que você VÊ na sua mente como diretor. A técnica vem depois!"}
+                                    {step === 2 && "Cada ângulo e movimento conta uma história diferente. Ângulo baixo = poder. Ângulo alto = vulnerabilidade. Dolly in = intimidade."}
+                                    {step === 3 && "A iluminação define o tom emocional. Luz dourada = nostalgia. Neon = urbano/futuro. Contraluz = mistério."}
+                                    {step === 4 && "O estilo deve servir sua história. Documentário para realismo, Noir para drama intenso, Indie para intimidade."}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<CinematicPromptAssistant />, document.getElementById('root'));
+    </script>
+</body>
+</html>
