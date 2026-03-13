@@ -1,0 +1,31 @@
+.DS_Store
+.vscode
+node_modules
+# MacOS
+.DS_Store
+
+# Linux
+*~
+.Trash-*
+.nfs*
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+*.tmp.DS_Store
+__pycache__/
+.env
+.venv/
+.DS_Store
+__pycache__/
+.env
+.venv/

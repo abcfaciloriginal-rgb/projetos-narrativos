@@ -1,0 +1,138 @@
+{
+  "solidão": {
+    "core_idea": "ausência humana perceptível",
+    "symbol_family": [
+      "cadeira vazia",
+      "mesa incompleta",
+      "quarto vazio",
+      "janela sem presença",
+      "corredor silencioso"
+    ],
+    "visual_traits": [
+      "espaço negativo",
+      "silêncio visual",
+      "baixa densidade",
+      "isolamento"
+    ],
+    "inspiration_mode": "usar como família de ausência, não como símbolo fixo"
+  },
+  "tempo": {
+    "core_idea": "desgaste inevitável e passagem",
+    "symbol_family": [
+      "relógio quebrado",
+      "areia caindo",
+      "vela derretendo",
+      "fotografia envelhecida",
+      "folha seca"
+    ],
+    "visual_traits": [
+      "degradação",
+      "fragilidade",
+      "passagem",
+      "irreversibilidade"
+    ],
+    "inspiration_mode": "buscar sinais de passagem, não apenas relógios"
+  },
+  "mentira": {
+    "core_idea": "aparência contra verdade",
+    "symbol_family": [
+      "máscara rachada",
+      "espelho partido",
+      "sombra distorcida",
+      "rosto meio oculto",
+      "vidro embaçado"
+    ],
+    "visual_traits": [
+      "dupla camada",
+      "ocultação",
+      "dissonância",
+      "ruptura"
+    ],
+    "inspiration_mode": "usar a lógica de duplicidade e ocultação"
+  },
+  "esperança": {
+    "core_idea": "abertura em meio ao limite",
+    "symbol_family": [
+      "porta aberta",
+      "luz entrando",
+      "janela iluminada",
+      "mão estendida",
+      "broto surgindo"
+    ],
+    "visual_traits": [
+      "contraste entre escuridão e abertura",
+      "direção",
+      "alívio",
+      "passagem"
+    ],
+    "inspiration_mode": "usar sinais de possibilidade, não apenas portas"
+  },
+  "prisão mental": {
+    "core_idea": "limite invisível aceito como real",
+    "symbol_family": [
+      "gaiola aberta",
+      "corrente frouxa",
+      "quarto sem saída aparente",
+      "labirinto",
+      "sombra aprisionada"
+    ],
+    "visual_traits": [
+      "tensão",
+      "repetição",
+      "limite",
+      "aperto psicológico"
+    ],
+    "inspiration_mode": "representar aprisionamento interno, não necessariamente físico"
+  },
+  "perda": {
+    "core_idea": "presença transformada em ausência",
+    "symbol_family": [
+      "fotografia rasgada",
+      "prato intacto",
+      "roupa esquecida",
+      "cama vazia",
+      "objeto abandonado"
+    ],
+    "visual_traits": [
+      "falta",
+      "resto",
+      "eco emocional",
+      "memória"
+    ],
+    "inspiration_mode": "trabalhar o que sobrou, não apenas o que sumiu"
+  },
+  "orgulho": {
+    "core_idea": "grandeza vazia e autoengano",
+    "symbol_family": [
+      "coroa caída",
+      "trono vazio",
+      "espelho rachado",
+      "roupa elegante no chão",
+      "estátua partida"
+    ],
+    "visual_traits": [
+      "queda",
+      "aparência vs verdade",
+      "isolamento",
+      "rigidez"
+    ],
+    "inspiration_mode": "usar sinais de status corroído"
+  },
+  "redenção": {
+    "core_idea": "retorno possível após ruína",
+    "symbol_family": [
+      "luz atravessando a escuridão",
+      "mão erguida",
+      "porta entreaberta",
+      "água lavando",
+      "rosto voltando à luz"
+    ],
+    "visual_traits": [
+      "contraste",
+      "elevação",
+      "alívio",
+      "renascimento"
+    ],
+    "inspiration_mode": "trabalhar passagem da queda para a abertura"
+  }
+}

@@ -1,0 +1,331 @@
+/* RESET BÁSICO */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0e0e10;
+  color: #e5e5e5;
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+/* CABEÇALHO */
+
+#atelier-header {
+  background: #151518;
+  border-bottom: 1px solid #2b2b2f;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.brand-area h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f0e6c8;
+}
+
+.brand-area p {
+  font-size: 13px;
+  color: #9a9a9a;
+}
+
+.session-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.session-area input,
+.session-area select {
+  padding: 6px 8px;
+  background: #1c1c20;
+  border: 1px solid #2c2c30;
+  color: #e5e5e5;
+}
+
+.action-area button {
+  background: #222227;
+  border: 1px solid #34343a;
+  color: #e5e5e5;
+  padding: 8px 12px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.action-area button:hover {
+  background: #2d2d33;
+}
+
+/* WORKFLOW */
+
+#workflow-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 30px;
+  border-bottom: 1px solid #2b2b2f;
+}
+
+.workflow-step {
+  padding: 6px 12px;
+  background: #1c1c20;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+.workflow-step.active {
+  background: #2d2d33;
+  color: #f0e6c8;
+}
+
+/* LAYOUT PRINCIPAL */
+
+.atelier-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PAINÉIS */
+
+.left-panel,
+.center-panel,
+.right-panel {
+  background: #151518;
+  padding: 18px;
+  border-radius: 6px;
+  border: 1px solid #26262b;
+}
+
+.panel-title {
+  font-size: 18px;
+  margin-bottom: 14px;
+  color: #f0e6c8;
+}
+
+.panel-section {
+  margin-bottom: 24px;
+}
+
+.panel-section h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #bfbfbf;
+}
+
+/* CAMPOS */
+
+.field-group {
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #9a9a9a;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  background: #1b1b1f;
+  border: 1px solid #2b2b30;
+  padding: 7px;
+  color: #e5e5e5;
+  font-size: 13px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* RANGE */
+
+input[type="range"] {
+  width: 100%;
+}
+
+/* CHECKBOX E RADIO */
+
+fieldset {
+  border: none;
+  margin-bottom: 10px;
+}
+
+fieldset label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+/* ABAS */
+
+.results-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tab-button {
+  background: #1c1c20;
+  border: 1px solid #2e2e33;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #a0a0a0;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: #2c2c31;
+  color: #f0e6c8;
+}
+
+/* CONTEÚDO DAS ABAS */
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* CARDS */
+
+.result-card {
+  background: #1a1a1f;
+  border: 1px solid #2b2b31;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.card-tag {
+  color: #c5b37c;
+}
+
+.card-score {
+  color: #9a9a9a;
+}
+
+.result-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.card-meta p {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+/* AÇÕES DOS CARDS */
+
+.card-actions {
+  margin-top: 8px;
+}
+
+.card-actions button {
+  background: #232329;
+  border: 1px solid #35353b;
+  color: #e5e5e5;
+  padding: 5px 8px;
+  font-size: 11px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.card-actions button:hover {
+  background: #303038;
+}
+
+/* LISTA DE TEXTOS */
+
+.thumbtext-list {
+  list-style: none;
+}
+
+.thumbtext-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1d1d22;
+  border: 1px solid #2e2e33;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+
+.thumbtext {
+  font-weight: 500;
+}
+
+/* ESCOLHAS DO DIRETOR */
+
+.director-choices {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #2b2b30;
+}
+
+.director-choices h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.director-choices p {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.result-card {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  border-color: #4a4a55;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+button {
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #6f6240;
+  box-shadow: 0 0 0 2px rgba(111, 98, 64, 0.18);
+}
+
+/* ESTADOS E UTILITÁRIOS */
+
+.waiting-message {
+  color: #666;
+  font-size: 12px;
+}
+
+.refine-section {
+  margin-top: 20px;
+}

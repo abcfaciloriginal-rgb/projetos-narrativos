@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier de Embalagem Narrativa</title>
+</head>
+<body>
+  <div id="app">
+
+    <!-- CABEÇALHO -->
+    <header id="atelier-header">
+      <div class="brand-area">
+        <h1>Atelier de Embalagem Narrativa</h1>
+        <p>Transformando histórias prontas em títulos e miniaturas com alma, tensão e presença.</p>
+      </div>
+
+      <div class="session-area">
+        <label for="session-name">Sessão</label>
+        <input type="text" id="session-name" name="session-name" placeholder="Ex: A Traição Silenciosa" />
+
+        <label for="session-status">Status</label>
+        <select id="session-status" name="session-status">
+          <option value="nao-analisado">Não analisado</option>
+          <option value="historia-analisada">História analisada</option>
+          <option value="embalagem-gerada">Embalagem gerada</option>
+        </select>
+      </div>
+
+      <div class="action-area">
+        <button id="btn-analyze-story" type="button">Analisar História</button>
+        <button id="btn-generate-package" type="button">Gerar Embalagem</button>
+        <button id="btn-refine-selected" type="button">Refinar Selecionados</button>
+        <button id="btn-export-session" type="button">Exportar Sessão</button>
+      </div>
+    </header>
+
+    <!-- FLUXO -->
+    <section id="workflow-bar" aria-label="Fluxo de trabalho">
+      <div class="workflow-step active">1. Inserir História</div>
+      <div class="workflow-step">2. Definir Direção</div>
+      <div class="workflow-step">3. Analisar Núcleo</div>
+      <div class="workflow-step">4. Gerar Embalagem</div>
+      <div class="workflow-step">5. Refinar</div>
+      <div class="workflow-step">6. Exportar</div>
+    </section>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <main class="atelier-layout">
+
+      <!-- COLUNA ESQUERDA -->
+      <aside class="left-panel">
+        <h2 class="panel-title">Matéria-Prima</h2>
+
+        <!-- HISTÓRIA BASE -->
+        <section class="panel-section story-base">
+          <h3>História Base</h3>
+
+          <div class="field-group">
+            <label for="story-title">Nome interno da história</label>
+            <input type="text" id="story-title" name="story-title" placeholder="Ex: O Homem que Não Viu o Amor" />
+          </div>
+
+          <div class="field-group">
+            <label for="story-full">História completa</label>
+            <textarea id="story-full" name="story-full" rows="12" placeholder="Cole aqui a história completa..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="story-summary">Resumo narrativo</label>
+            <textarea id="story-summary" name="story-summary" rows="5" placeholder="Resuma a história em poucas linhas..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="story-logline">Logline emocional</label>
+            <textarea id="story-logline" name="story-logline" rows="3" placeholder="Ex: Um homem só percebe o amor que recebeu quando já não pode mais tocá-lo."></textarea>
+          </div>
+        </section>
+
+        <!-- ESSÊNCIA DRAMÁTICA -->
+        <section class="panel-section story-essence">
+          <h3>Essência Dramática</h3>
+
+          <div class="field-group">
+            <label for="theme-central">Tema central</label>
+            <input type="text" id="theme-central" name="theme-central" placeholder="Ex: redenção, orgulho, abandono..." />
+          </div>
+
+          <div class="field-group">
+            <label for="emotion-dominant">Emoção dominante</label>
+            <select id="emotion-dominant" name="emotion-dominant">
+              <option value="">Selecione</option>
+              <option value="culpa">Culpa</option>
+              <option value="dor">Dor</option>
+              <option value="saudade">Saudade</option>
+              <option value="choque">Choque</option>
+              <option value="vazio">Vazio</option>
+              <option value="esperanca">Esperança</option>
+              <option value="indignacao">Indignação</option>
+              <option value="ternura-amarga">Ternura amarga</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="core-wound">Ferida principal</label>
+            <input type="text" id="core-wound" name="core-wound" placeholder="Ex: rejeição, perda tardia, invisibilidade..." />
+          </div>
+
+          <div class="field-group">
+            <label for="human-contradiction">Contradição humana central</label>
+            <textarea id="human-contradiction" name="human-contradiction" rows="4" placeholder="Ex: Ele queria ser amado, mas rejeitava qualquer gesto de amor."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="symbol-main">Imagem simbólica principal</label>
+            <input type="text" id="symbol-main" name="symbol-main" placeholder="Ex: cadeira vazia, prato intacto, espelho quebrado..." />
+          </div>
+
+          <div class="field-group">
+            <label for="scene-visual">Cena mais visual</label>
+            <textarea id="scene-visual" name="scene-visual" rows="4" placeholder="Descreva a cena mais forte visualmente..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="subtext-central">Subtexto central</label>
+            <textarea id="subtext-central" name="subtext-central" rows="4" placeholder="Descreva o subtexto principal da história..."></textarea>
+          </div>
+        </section>
+
+        <!-- CONTEXTO EDITORIAL -->
+        <section class="panel-section editorial-context">
+          <h3>Contexto Editorial</h3>
+
+          <div class="field-group">
+            <label for="target-audience">Público principal</label>
+            <select id="target-audience" name="target-audience">
+              <option value="">Selecione</option>
+              <option value="amplo">Amplo</option>
+              <option value="emocional-reflexivo">Emocional / reflexivo</option>
+              <option value="filosofico">Filosófico</option>
+              <option value="espiritual">Espiritual</option>
+              <option value="masculino-reflexivo">Masculino reflexivo</option>
+              <option value="feminino-emocional">Feminino emocional</option>
+              <option value="narrativas-universais">Narrativas humanas universais</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="director-notes">Observações do diretor</label>
+            <textarea id="director-notes" name="director-notes" rows="5" placeholder="Ex: Quero algo mais íntimo, menos popular, sem excesso religioso explícito..."></textarea>
+          </div>
+        </section>
+      </aside>
+
+      <!-- COLUNA CENTRAL -->
+      <section class="center-panel">
+        <h2 class="panel-title">Mesa de Direção</h2>
+
+        <!-- DIREÇÃO DE TÍTULOS -->
+        <section class="panel-section title-direction">
+          <h3>Direção de Títulos</h3>
+
+          <div class="field-group">
+            <label for="title-style">Estilo dominante</label>
+            <select id="title-style" name="title-style">
+              <option value="cinematografico">Cinematográfico</option>
+              <option value="emocional">Emocional</option>
+              <option value="filosofico">Filosófico</option>
+              <option value="provocativo">Provocativo</option>
+              <option value="curiosidade-elegante">Curiosidade elegante</option>
+              <option value="dor-silenciosa">Dor silenciosa</option>
+              <option value="choque-silencioso">Choque silencioso</option>
+              <option value="tensao-moral">Tensão moral</option>
+              <option value="manifesto">Manifesto</option>
+              <option value="redencao">Redenção</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="title-format">Formato do título</label>
+            <select id="title-format" name="title-format">
+              <option value="frase-curta">Frase curta</option>
+              <option value="frase-media">Frase média</option>
+              <option value="frase-longa">Frase longa de impacto</option>
+              <option value="pergunta">Pergunta</option>
+              <option value="contraste">Contraste</option>
+              <option value="declaracao">Declaração</option>
+              <option value="revelacao">Revelação</option>
+              <option value="paradoxo">Paradoxo</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="click-intensity">Intensidade de clique</label>
+            <input type="range" id="click-intensity" name="click-intensity" min="1" max="5" value="3" />
+          </div>
+
+          <div class="field-group">
+            <label for="mystery-level">Grau de mistério</label>
+            <input type="range" id="mystery-level" name="mystery-level" min="1" max="5" value="2" />
+          </div>
+
+          <div class="field-group">
+            <label for="clarity-level">Grau de clareza</label>
+            <input type="range" id="clarity-level" name="clarity-level" min="1" max="5" value="4" />
+          </div>
+        </section>
+
+        <!-- DIREÇÃO DE MINIATURAS -->
+        <section class="panel-section thumbnail-direction">
+          <h3>Direção de Miniaturas</h3>
+
+          <div class="field-group">
+            <label for="thumbnail-type">Tipo dominante de composição</label>
+            <select id="thumbnail-type" name="thumbnail-type">
+              <option value="close-emocional">Close emocional</option>
+              <option value="rosto-detalhe">Rosto + detalhe</option>
+              <option value="objeto-simbolico">Objeto simbólico</option>
+              <option value="ausencia-presenca">Ausência / presença</option>
+              <option value="confronto">Confronto</option>
+              <option value="figura-isolada">Figura isolada</option>
+              <option value="metafora-visual">Metáfora visual</option>
+              <option value="luz-sombra">Luz e sombra</option>
+              <option value="gesto-congelado">Gesto congelado</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="visual-style">Estética visual</label>
+            <select id="visual-style" name="visual-style">
+              <option value="realista-cinematografica">Realista cinematográfica</option>
+              <option value="minimalista-escura">Minimalista escura</option>
+              <option value="poetica">Poética</option>
+              <option value="crua">Crua</option>
+              <option value="contemplativa">Contemplativa</option>
+              <option value="dramatica">Dramática</option>
+              <option value="sagrada-sem-kitsch">Sagrada sem kitsch</option>
+            </select>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Quantidade de elementos</legend>
+            <label><input type="radio" name="image-elements" value="1-elemento" checked /> 1 elemento</label>
+            <label><input type="radio" name="image-elements" value="2-elementos" /> 2 elementos</label>
+            <label><input type="radio" name="image-elements" value="minimo-absoluto" /> Mínimo absoluto</label>
+          </fieldset>
+
+          <div class="field-group">
+            <label for="visual-contrast">Contraste visual dominante</label>
+            <select id="visual-contrast" name="visual-contrast">
+              <option value="luz-sombra">Luz vs sombra</option>
+              <option value="presenca-ausencia">Presença vs ausência</option>
+              <option value="forca-fragilidade">Força vs fragilidade</option>
+              <option value="pureza-ruina">Pureza vs ruína</option>
+              <option value="rosto-vazio">Rosto vs vazio</option>
+              <option value="grandeza-queda">Grandeza vs queda</option>
+            </select>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Uso de texto na thumbnail</legend>
+            <label><input type="radio" name="thumb-text-mode" value="sem-texto" checked /> Sem texto</label>
+            <label><input type="radio" name="thumb-text-mode" value="1-2-palavras" /> 1 a 2 palavras</label>
+            <label><input type="radio" name="thumb-text-mode" value="ate-4-palavras" /> Até 4 palavras</label>
+            <label><input type="radio" name="thumb-text-mode" value="com-e-sem" /> Gerar com e sem texto</label>
+          </fieldset>
+        </section>
+
+        <!-- DIREÇÃO EDITORIAL -->
+        <section class="panel-section editorial-direction">
+          <h3>Direção Editorial</h3>
+
+          <fieldset class="field-group">
+            <legend>Modo de embalagem</legend>
+            <label><input type="radio" name="packaging-mode" value="popular" /> Popular</label>
+            <label><input type="radio" name="packaging-mode" value="equilibrado" checked /> Equilibrado</label>
+            <label><input type="radio" name="packaging-mode" value="autoral" /> Autoral</label>
+          </fieldset>
+
+          <div class="field-group">
+            <label for="sophistication-level">Nível de sofisticação</label>
+            <input type="range" id="sophistication-level" name="sophistication-level" min="1" max="5" value="4" />
+          </div>
+
+          <div class="field-group">
+            <label for="sensationalism-limit">Limite de sensacionalismo</label>
+            <input type="range" id="sensationalism-limit" name="sensationalism-limit" min="1" max="5" value="2" />
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Restrições</legend>
+            <label><input type="checkbox" id="constraint-no-vulgar-clickbait" checked /> Evitar clickbait vulgar</label>
+            <label><input type="checkbox" id="constraint-no-teacher-tone" checked /> Evitar tom professoral</label>
+            <label><input type="checkbox" id="constraint-no-overexplaining" checked /> Evitar excesso de explicação</label>
+            <label><input type="checkbox" id="constraint-no-visual-cliche" checked /> Evitar clichê visual</label>
+            <label><input type="checkbox" id="constraint-no-explicit-moral" checked /> Evitar moral explícita</label>
+            <label><input type="checkbox" id="constraint-keep-subtext" checked /> Manter subtexto</label>
+            <label><input type="checkbox" id="constraint-keep-channel-language" checked /> Manter linguagem do canal</label>
+            <label><input type="checkbox" id="constraint-minimalism" checked /> Privilegiar minimalismo</label>
+          </fieldset>
+        </section>
+
+        <!-- CONFIGURAÇÃO DE SAÍDA -->
+        <section class="panel-section output-settings">
+          <h3>Configuração de Saída</h3>
+
+          <div class="field-group">
+            <label for="output-titles-count">Quantidade de títulos</label>
+            <select id="output-titles-count" name="output-titles-count">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="output-thumbnails-count">Quantidade de miniaturas</label>
+            <select id="output-thumbnails-count" name="output-thumbnails-count">
+              <option value="3">3</option>
+              <option value="5" selected>5</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="output-thumbtexts-count">Quantidade de textos curtos</label>
+            <select id="output-thumbtexts-count" name="output-thumbtexts-count">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+
+          <label><input type="checkbox" id="generate-analysis" checked /> Gerar análise técnica</label>
+          <label><input type="checkbox" id="generate-ranking" checked /> Gerar ranking final</label>
+          <label><input type="checkbox" id="generate-combos" checked /> Gerar combinações prontas</label>
+        </section>
+      </section>
+
+      <!-- COLUNA DIREITA -->
+      <section class="right-panel">
+        <h2 class="panel-title">Vitrine</h2>
+
+        <!-- ABAS -->
+        <nav class="results-tabs" aria-label="Abas de resultados">
+          <button class="tab-button active" data-tab="tab-core" type="button">Núcleo Extraído</button>
+          <button class="tab-button" data-tab="tab-titles" type="button">Títulos</button>
+          <button class="tab-button" data-tab="tab-thumbnails" type="button">Miniaturas</button>
+          <button class="tab-button" data-tab="tab-thumbtexts" type="button">Textos</button>
+          <button class="tab-button" data-tab="tab-combos" type="button">Cartazes Possíveis</button>
+          <button class="tab-button" data-tab="tab-analysis" type="button">Leitura de Força</button>
+          <button class="tab-button" data-tab="tab-final-direction" type="button">Direção Final</button>
+        </nav>
+
+        <div class="tab-content">
+
+          <!-- NÚCLEO EXTRAÍDO -->
+          <section id="tab-core" class="tab-panel active">
+            <article class="result-card">
+              <h3>Núcleo Extraído</h3>
+              <p><strong>Ferida central:</strong> Ele queria ser amado, mas rejeitava toda forma de afeto.</p>
+              <p><strong>Contradição humana:</strong> Parecia forte, mas vivia prisioneiro do próprio orgulho.</p>
+              <p><strong>Emoção dominante:</strong> Perda tardia.</p>
+              <p><strong>Símbolo principal:</strong> Cadeira vazia.</p>
+              <p><strong>Pergunta invisível:</strong> Por que só vemos o amor quando ele já partiu?</p>
+              <p><strong>Promessa de clique:</strong> Revelação tardia + dor silenciosa.</p>
+            </article>
+          </section>
+
+          <!-- TÍTULOS -->
+          <section id="tab-titles" class="tab-panel">
+            <article class="result-card title-card">
+              <header class="card-header">
+                <span class="card-tag">Dor silenciosa</span>
+                <span class="card-score">Força: 9.1</span>
+              </header>
+
+              <h3>Ele Só Viu o Amor Quando Já Era Tarde</h3>
+
+              <div class="card-meta">
+                <p><strong>Mecanismo:</strong> revelação tardia</p>
+                <p><strong>Emoção:</strong> arrependimento</p>
+                <p><strong>Risco:</strong> baixo</p>
+              </div>
+
+              <footer class="card-actions">
+                <button type="button">Copiar</button>
+                <button type="button">Favoritar</button>
+                <button type="button">Refinar</button>
+              </footer>
+            </article>
+
+            <article class="result-card title-card">
+              <header class="card-header">
+                <span class="card-tag">Filosófico emocional</span>
+                <span class="card-score">Força: 8.7</span>
+              </header>
+
+              <h3>O Orgulho Também Destrói em Silêncio</h3>
+
+              <div class="card-meta">
+                <p><strong>Mecanismo:</strong> contraste moral</p>
+                <p><strong>Emoção:</strong> tensão humana</p>
+                <p><strong>Risco:</strong> médio</p>
+              </div>
+
+              <footer class="card-actions">
+                <button type="button">Copiar</button>
+                <button type="button">Favoritar</button>
+                <button type="button">Refinar</button>
+              </footer>
+            </article>
+          </section>
+
+          <!-- MINIATURAS -->
+          <section id="tab-thumbnails" class="tab-panel">
+            <article class="result-card thumbnail-card">
+              <header class="card-header">
+                <span class="card-tag">Ausência iluminada</span>
+                <span class="card-score">Força visual: 9.4</span>
+              </header>
+
+              <h3>Homem no escuro diante de uma cadeira vazia iluminada</h3>
+
+              <div class="card-meta">
+                <p><strong>Símbolo:</strong> ausência</p>
+                <p><strong>Emoção:</strong> perda silenciosa</p>
+                <p><strong>Enquadramento:</strong> plano médio com espaço negativo</p>
+                <p><strong>Contraste:</strong> sombra vs luz</p>
+                <p><strong>Risco de clichê:</strong> baixo</p>
+              </div>
+
+              <footer class="card-actions">
+                <button type="button">Copiar</button>
+                <button type="button">Favoritar</button>
+                <button type="button">Refinar</button>
+              </footer>
+            </article>
+
+            <article class="result-card thumbnail-card">
+              <header class="card-header">
+                <span class="card-tag">O prato intacto</span>
+                <span class="card-score">Força visual: 8.8</span>
+              </header>
+
+              <h3>Mesa posta, prato intacto, cadeira afastada, luz lateral fria</h3>
+
+              <div class="card-meta">
+                <p><strong>Símbolo:</strong> amor não vivido</p>
+                <p><strong>Emoção:</strong> vazio</p>
+                <p><strong>Enquadramento:</strong> plano detalhe ampliado</p>
+                <p><strong>Contraste:</strong> presença vs ausência</p>
+                <p><strong>Risco de clichê:</strong> médio</p>
+              </div>
+
+              <footer class="card-actions">
+                <button type="button">Copiar</button>
+                <button type="button">Favoritar</button>
+                <button type="button">Refinar</button>
+              </footer>
+            </article>
+          </section>
+
+          <!-- TEXTOS -->
+          <section id="tab-thumbtexts" class="tab-panel">
+            <article class="result-card thumbtext-list-card">
+              <h3>Textos Curtos</h3>
+              <ul class="thumbtext-list">
+                <li>
+                  <span class="thumbtext">Tarde Demais</span>
+                  <span class="thumbtext-score">Força: 9.0</span>
+                  <button type="button">Copiar</button>
+                  <button type="button">♥</button>
+                </li>
+                <li>
+                  <span class="thumbtext">Ele Não Viu</span>
+                  <span class="thumbtext-score">Força: 8.6</span>
+                  <button type="button">Copiar</button>
+                  <button type="button">♥</button>
+                </li>
+                <li>
+                  <span class="thumbtext">Já Era</span>
+                  <span class="thumbtext-score">Força: 8.1</span>
+                  <button type="button">Copiar</button>
+                  <button type="button">♥</button>
+                </li>
+                <li>
+                  <span class="thumbtext">Amor em Silêncio</span>
+                  <span class="thumbtext-score">Força: 8.8</span>
+                  <button type="button">Copiar</button>
+                  <button type="button">♥</button>
+                </li>
+              </ul>
+            </article>
+          </section>
+
+          <!-- COMBINAÇÕES -->
+          <section id="tab-combos" class="tab-panel">
+            <article class="result-card combo-card">
+              <header class="card-header">
+                <span class="card-tag">Perfil: Autoral</span>
+              </header>
+
+              <h3>Cartaz Possível 01</h3>
+
+              <div class="combo-block">
+                <p><strong>Título:</strong> Ele Só Viu o Amor Quando Já Era Tarde</p>
+                <p><strong>Miniatura:</strong> Homem no escuro diante de cadeira vazia iluminada</p>
+                <p><strong>Texto curto:</strong> Tarde Demais</p>
+                <p><strong>Público provável:</strong> emocional / reflexivo</p>
+                <p><strong>Coerência com o canal:</strong> 9.5</p>
+                <p><strong>Potencial de clique:</strong> 8.9</p>
+              </div>
+
+              <footer class="card-actions">
+                <button type="button">Favoritar</button>
+                <button type="button">Copiar combinação</button>
+              </footer>
+            </article>
+          </section>
+
+          <!-- ANÁLISE -->
+          <section id="tab-analysis" class="tab-panel">
+            <article class="result-card analysis-card">
+              <h3>Leitura de Força — Título Selecionado</h3>
+              <p><strong>Curiosidade:</strong> 9.2</p>
+              <p><strong>Clareza:</strong> 8.8</p>
+              <p><strong>Emoção:</strong> 9.4</p>
+              <p><strong>Singularidade:</strong> 8.3</p>
+              <p><strong>Potencial de clique:</strong> 8.9</p>
+              <p><strong>Coerência com a história:</strong> 9.5</p>
+              <p><strong>Coerência com o canal:</strong> 9.6</p>
+            </article>
+
+            <article class="result-card analysis-card">
+              <h3>Leitura de Força — Miniatura Selecionada</h3>
+              <p><strong>Leitura imediata:</strong> 9.0</p>
+              <p><strong>Impacto emocional:</strong> 9.3</p>
+              <p><strong>Força simbólica:</strong> 9.5</p>
+              <p><strong>Limpeza visual:</strong> 9.1</p>
+              <p><strong>Memorabilidade:</strong> 8.7</p>
+              <p><strong>Risco de excesso:</strong> 2.1</p>
+            </article>
+          </section>
+
+          <!-- DIREÇÃO FINAL -->
+          <section id="tab-final-direction" class="tab-panel">
+            <article class="result-card final-direction-card">
+              <h3>Direção Final</h3>
+              <p><strong>Melhor opção para o canal:</strong> “Ele Só Viu o Amor Quando Já Era Tarde” + cadeira vazia iluminada + texto curto “Tarde Demais”.</p>
+              <p><strong>Melhor opção autoral:</strong> “O Orgulho Também Destrói em Silêncio” + prato intacto sobre a mesa.</p>
+              <p><strong>Melhor opção popular sem vulgaridade:</strong> “Quando Ele Descobriu, Já Era Tarde” + close emocional contido.</p>
+              <p><strong>Observação editorial:</strong> Esta história responde melhor a uma embalagem de perda tardia, silêncio e ausência, e não a choque direto.</p>
+            </article>
+          </section>
+
+        </div>
+
+        <!-- ESCOLHAS DO DIRETOR -->
+        <section class="director-choices">
+          <h3>Escolhas do Diretor</h3>
+          <p>Títulos favoritados: <span id="favorite-titles-count">0</span></p>
+          <p>Miniaturas favoritas: <span id="favorite-thumbnails-count">0</span></p>
+          <p>Textos favoritos: <span id="favorite-thumbtexts-count">0</span></p>
+
+          <div class="card-actions">
+            <button id="btn-cross-favorites" type="button">Cruzar Favoritos</button>
+            <button id="btn-clear-favorites" type="button">Limpar Favoritos</button>
+            <button id="btn-save-selection" type="button">Salvar Seleção</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>
