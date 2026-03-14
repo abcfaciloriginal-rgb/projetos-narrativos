@@ -1,4 +1,4 @@
-const LIBRARY_BASE = "./library";
+const LIBRARY_BASE = "../library";
 
 async function loadJson(path) {
   const response = await fetch(path);

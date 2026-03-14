@@ -1,0 +1,78 @@
+{
+  "name": "Netflix Documentary Style",
+  "category": "linguagem visual",
+  "essence": "prestígio cinematográfico com leitura simples e alta densidade emocional",
+  "core_principles": [
+    "parecer cartaz de filme",
+    "menos elementos, mais presença",
+    "imagem como promessa emocional",
+    "silêncio visual com força narrativa"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "personagem em tensão",
+      "momento congelado",
+      "objeto simbólico",
+      "ambiente com atmosfera"
+    ],
+    "composition_tendencies": [
+      "personagem dominante",
+      "espaço negativo",
+      "objeto narrativo único",
+      "hierarquia visual clara"
+    ],
+    "symbol_families": [
+      "cadeira vazia",
+      "porta entreaberta",
+      "espelho rachado",
+      "fotografia antiga",
+      "janela iluminada",
+      "corredor vazio"
+    ],
+    "visual_traits": [
+      "cinematográfico",
+      "baixo ruído",
+      "alto contraste controlado",
+      "prestígio visual"
+    ],
+    "color_language": [
+      "tons sóbrios",
+      "luz dramática",
+      "paleta contida",
+      "contraste elegante"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "frase curta de tensão",
+      "revelação silenciosa",
+      "verdade escondida",
+      "conflito humano"
+    ],
+    "preferred_tone": [
+      "sério",
+      "emocional",
+      "contemplativo",
+      "intenso"
+    ],
+    "avoid": [
+      "exagero de internet",
+      "poluição visual",
+      "muitos elementos competitivos",
+      "texto desnecessário na thumb"
+    ]
+  },
+  "emotional_field": [
+    "mistério",
+    "peso humano",
+    "verdade",
+    "tensão",
+    "fragilidade"
+  ],
+  "warnings": [
+    "não confundir sofisticação com frieza",
+    "não tornar a thumb abstrata demais",
+    "não perder legibilidade em telas pequenas"
+  ],
+  "inspiration_mode": "usar como linguagem de prestígio visual, não como cópia de cartazes específicos"
+}

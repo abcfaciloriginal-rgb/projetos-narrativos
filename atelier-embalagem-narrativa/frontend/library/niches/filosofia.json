@@ -1,0 +1,80 @@
+{
+  "name": "Filosofia",
+  "category": "nicho",
+  "essence": "questionamento humano com densidade emocional e clareza visual",
+  "core_principles": [
+    "menos ruído, mais significado",
+    "curiosidade intelectual com tensão emocional",
+    "imagem como metáfora, não como explicação",
+    "prestígio visual em vez de excesso"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "busca de verdade",
+      "contradição humana",
+      "ausência de sentido",
+      "revelação silenciosa"
+    ],
+    "composition_tendencies": [
+      "personagem isolado",
+      "objeto simbólico único",
+      "espaço negativo",
+      "luz dramática"
+    ],
+    "symbol_families": [
+      "máscara",
+      "espelho",
+      "porta",
+      "cadeira vazia",
+      "corredor",
+      "janela",
+      "relógio"
+    ],
+    "visual_traits": [
+      "minimalismo",
+      "alto contraste",
+      "fundo limpo",
+      "leitura rápida"
+    ],
+    "color_language": [
+      "tons sóbrios",
+      "azul profundo",
+      "preto",
+      "dourado discreto",
+      "teal and orange controlado"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "a verdade sobre...",
+      "o erro de...",
+      "o preço invisível de...",
+      "o lado que ninguém vê...",
+      "nem toda ... é ..."
+    ],
+    "preferred_tone": [
+      "provocativo",
+      "reflexivo",
+      "filosófico",
+      "emocional"
+    ],
+    "avoid": [
+      "promessa didática demais",
+      "linguagem técnica fria",
+      "clickbait vulgar"
+    ]
+  },
+  "emotional_field": [
+    "reflexão",
+    "incômodo",
+    "descoberta",
+    "arrependimento",
+    "lucidez"
+  ],
+  "warnings": [
+    "não literalizar demais a metáfora",
+    "não encher a thumbnail de texto",
+    "não transformar reflexão em aula"
+  ],
+  "inspiration_mode": "usar como gramática de atmosfera e tensão, nunca como molde fixo"
+}

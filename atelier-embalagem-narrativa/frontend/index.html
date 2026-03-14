@@ -1,164 +1,266 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier de Embalagem Narrativa</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier de Embalagem Narrativa</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-    <header id="atelier-header">
-        <div class="brand-area">
-            <h1>Atelier de Embalagem Narrativa</h1>
-            <p>Design de Impacto</p>
-        </div>
-        <div class="session-area">
-            <input type="text" id="session-name" placeholder="Nome da Sessão">
-            <input type="text" id="session-status" placeholder="Status: Aguardando" readonly>
-        </div>
-        <div class="action-area">
-            <button id="btn-export-session">Exportar Sessão</button>
-        </div>
-    </header>
-
-    <div id="workflow-bar">
-        <div class="workflow-step active">1. Roteiro</div>
-        <div class="workflow-step">2. Análise</div>
-        <div class="workflow-step">3. Geração</div>
-        <div class="workflow-step">4. Refino</div>
-    </div>
-
-    <div class="atelier-layout">
-        
-        <!-- PAINEL ESQUERDO: INPUTS -->
-        <aside class="left-panel">
-            <h2 class="panel-title">História Base</h2>
-            
-            <div class="panel-section">
-                <div class="field-group">
-                    <label for="story-title">Título Provisório</label>
-                    <input type="text" id="story-title" placeholder="Insira o título...">
-                </div>
-                <div class="field-group">
-                    <label for="story-full">História Completa / Roteiro</label>
-                    <textarea id="story-full" rows="15" placeholder="Cole o texto aqui..."></textarea>
-                </div>
-                <div class="field-group">
-                    <button id="btn-analyze-story">Analisar História</button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>Metadados Extraídos</h3>
-                <div class="field-group"><label>Logline</label><input type="text" id="story-logline"></div>
-                <div class="field-group"><label>Resumo</label><textarea id="story-summary" rows="3"></textarea></div>
-                <div class="field-group"><label>Tema Central</label><input type="text" id="theme-central"></div>
-                <div class="field-group"><label>Emoção Dominante</label><input type="text" id="emotion-dominant"></div>
-                <div class="field-group"><label>Ferida Central</label><input type="text" id="core-wound"></div>
-                <div class="field-group"><label>Contradição Humana</label><input type="text" id="human-contradiction"></div>
-                <div class="field-group"><label>Símbolo Principal</label><input type="text" id="symbol-main"></div>
-                <div class="field-group"><label>Subtexto</label><input type="text" id="subtext-central"></div>
-            </div>
-        </aside>
-
-        <!-- PAINEL CENTRAL: CONTROLES -->
-        <main class="center-panel">
-            <h2 class="panel-title">Direção</h2>
-            
-            <div class="panel-section">
-    <h3>Parâmetros Criativos</h3>
-
-    <div class="field-group">
-        <label for="video-niche">Nicho do vídeo</label>
-        <select id="video-niche">
-            <option value="">Selecionar</option>
-            <option value="filosofia">Filosofia</option>
-            <option value="romance">Romance</option>
-            <option value="educacao">Educação</option>
-            <option value="misterios">Mistérios</option>
-        </select>
-    </div>
-
-    <div class="field-group">
-        <label for="creative-reference">Referência Criativa</label>
-        <select id="creative-reference">
-            <option value="">Selecionar</option>
-            <option value="prince-ea">Prince Ea</option>
-            <option value="mrbeast">MrBeast</option>
-            <option value="romance-brasil">Romance Brasil</option>
-        </select>
-    </div>
-
-    <div class="field-group">
-    <label for="visual-language">Linguagem Visual</label>
-    <select id="visual-language">
-        <option value="">Selecionar</option>
-        <option value="netflix-doc">Netflix Doc</option>
-    </select>
+<header id="atelier-header">
+<div class="brand-area">
+<h1>Atelier de Embalagem Narrativa</h1>
+<p>Design de Impacto</p>
 </div>
 
-    <div class="field-group">
-        <label for="symbol-theme">Família Simbólica</label>
-        <select id="symbol-theme">
-            <option value="">Selecionar</option>
-            <option value="solidão">Solidão</option>
-            <option value="tempo">Tempo</option>
-            <option value="mentira">Mentira</option>
-            <option value="esperança">Esperança</option>
-            <option value="prisão mental">Prisão Mental</option>
-            <option value="perda">Perda</option>
-            <option value="orgulho">Orgulho</option>
-            <option value="redenção">Redenção</option>
-        </select>
-    </div>
+<div class="session-area">
+<input type="text" id="session-name" placeholder="Nome da Sessão">
+<input type="text" id="session-status" placeholder="Status: Aguardando" readonly>
+</div>
 
-    <div class="field-group">
-        <label>Intensidade Dramática</label>
-        <input type="range" id="dramatic-intensity" min="1" max="10">
-    </div>
+<div class="action-area">
+<button type="button" id="btn-export-session">Exportar Sessão</button>
+</div>
+</header>
 
-    <div class="field-group">
-        <button id="btn-generate-package">Gerar Embalagem</button>
-    </div>
+
+<div id="workflow-bar">
+<div class="workflow-step active">1. Roteiro</div>
+<div class="workflow-step">2. Análise</div>
+<div class="workflow-step">3. Geração</div>
+<div class="workflow-step">4. Refino</div>
+</div>
+
+
+<div class="atelier-layout">
+
+<!-- PAINEL ESQUERDO -->
+<aside class="left-panel">
+
+<h2 class="panel-title">História Base</h2>
+
+<div class="panel-section">
+
+<div class="field-group">
+<label for="story-title">Título Provisório</label>
+<input type="text" id="story-title" placeholder="Insira o título...">
+</div>
+
+<div class="field-group">
+<label for="story-full">História Completa / Roteiro</label>
+<textarea id="story-full" rows="15" placeholder="Cole o texto aqui..."></textarea>
+</div>
+
+<div class="field-group">
+<button type="button" id="btn-analyze-story">Analisar História</button>
+</div>
 
 </div>
 
-            <div class="director-choices">
-                <h3>Direção de Arte</h3>
-                <div id="tab-final-direction">
-                    <p class="waiting-message">Aguardando análise...</p>
-                </div>
-            </div>
-        </main>
 
-        <!-- PAINEL DIREITO: RESULTADOS -->
-        <aside class="right-panel">
-            <h2 class="panel-title">Resultados</h2>
-            
-            <div class="results-tabs">
-                <button class="tab-button active">Núcleo</button>
-                <button class="tab-button">Títulos</button>
-                <button class="tab-button">Thumbnails</button>
-                <button class="tab-button">Textos</button>
-                <button class="tab-button">Combos</button>
-                <button class="tab-button">Análise</button>
-            </div>
+<div class="panel-section">
 
-            <div id="tab-core" class="tab-panel active"></div>
-            <div id="tab-titles" class="tab-panel"></div>
-            <div id="tab-thumbnails" class="tab-panel"></div>
-            <div id="tab-thumbtexts" class="tab-panel"></div>
-            <div id="tab-combos" class="tab-panel"></div>
-            <div id="tab-analysis" class="tab-panel"></div>
+<h3>Metadados Extraídos</h3>
 
-            <div class="panel-section refine-section">
-                <button id="btn-refine-selected">Refinar Selecionados</button>
-            </div>
-        </aside>
+<div class="field-group">
+<label>Logline</label>
+<input type="text" id="story-logline">
+</div>
 
-    </div>
+<div class="field-group">
+<label>Resumo</label>
+<textarea id="story-summary" rows="3"></textarea>
+</div>
 
-    <script type="module" src="js/app.js"></script>
+<div class="field-group">
+<label>Tema Central</label>
+<input type="text" id="theme-central">
+</div>
+
+<div class="field-group">
+<label>Emoção Dominante</label>
+<input type="text" id="emotion-dominant">
+</div>
+
+<div class="field-group">
+<label>Ferida Central</label>
+<input type="text" id="core-wound">
+</div>
+
+<div class="field-group">
+<label>Contradição Humana</label>
+<input type="text" id="human-contradiction">
+</div>
+
+<div class="field-group">
+<label>Símbolo Principal</label>
+<input type="text" id="symbol-main">
+</div>
+
+<div class="field-group">
+<label>Subtexto</label>
+<input type="text" id="subtext-central">
+</div>
+
+</div>
+
+</aside>
+
+
+<!-- PAINEL CENTRAL -->
+
+<main class="center-panel">
+
+<h2 class="panel-title">Direção</h2>
+
+<div class="panel-section">
+
+<h3>Parâmetros Criativos</h3>
+
+<div class="field-group">
+<label for="video-niche">Nicho do vídeo</label>
+
+<select id="video-niche">
+<option value="">Selecionar</option>
+<option value="filosofia">Filosofia</option>
+<option value="romance">Romance</option>
+<option value="educacao">Educação</option>
+<option value="misterios">Mistérios</option>
+</select>
+
+</div>
+
+
+<div class="field-group">
+
+<label for="creative-reference">Referência Criativa</label>
+
+<select id="creative-reference">
+<option value="">Selecionar</option>
+<option value="prince-ea">Prince Ea</option>
+<option value="mrbeast">MrBeast</option>
+<option value="romance-brasil">Romance Brasil</option>
+</select>
+
+</div>
+
+
+<div class="field-group">
+
+<label for="visual-language">Linguagem Visual</label>
+
+<select id="visual-language">
+<option value="">Selecionar</option>
+<option value="netflix-doc">Netflix Doc</option>
+</select>
+
+</div>
+
+
+<div class="field-group">
+
+<label for="symbol-theme">Família Simbólica</label>
+
+<select id="symbol-theme">
+
+<option value="">Selecionar</option>
+<option value="solidão">Solidão</option>
+<option value="tempo">Tempo</option>
+<option value="mentira">Mentira</option>
+<option value="esperança">Esperança</option>
+<option value="prisao-mental">Prisão Mental</option>
+<option value="perda">Perda</option>
+<option value="orgulho">Orgulho</option>
+<option value="redencao">Redenção</option>
+
+</select>
+
+</div>
+
+
+<div class="field-group">
+
+<label>Intensidade Dramática</label>
+
+<input type="range"
+id="dramatic-intensity"
+min="1"
+max="10"
+value="5">
+
+</div>
+
+
+<div class="field-group">
+
+<button type="button" id="btn-generate-package">
+Gerar Embalagem
+</button>
+
+</div>
+
+</div>
+
+
+<div class="director-choices">
+
+<h3>Direção de Arte</h3>
+
+<div id="tab-final-direction">
+<p class="waiting-message">Aguardando análise...</p>
+</div>
+
+</div>
+
+</main>
+
+
+
+<!-- PAINEL DIREITO -->
+
+<aside class="right-panel">
+
+<h2 class="panel-title">Resultados</h2>
+
+<div class="results-tabs">
+
+<button class="tab-button active" data-tab="core">Núcleo</button>
+
+<button class="tab-button" data-tab="titles">Títulos</button>
+
+<button class="tab-button" data-tab="thumbnails">Thumbnails</button>
+
+<button class="tab-button" data-tab="thumbtexts">Textos</button>
+
+<button class="tab-button" data-tab="combos">Combos</button>
+
+<button class="tab-button" data-tab="analysis">Análise</button>
+
+</div>
+
+
+<div id="tab-core" class="tab-panel active"></div>
+<div id="tab-titles" class="tab-panel"></div>
+<div id="tab-thumbnails" class="tab-panel"></div>
+<div id="tab-thumbtexts" class="tab-panel"></div>
+<div id="tab-combos" class="tab-panel"></div>
+<div id="tab-analysis" class="tab-panel"></div>
+
+
+<div class="panel-section refine-section">
+<button type="button" id="btn-refine-selected">
+Refinar Selecionados
+</button>
+</div>
+
+</aside>
+
+</div>
+
+
+<script type="module" src="js/app.js"></script>
+
 </body>
 </html>

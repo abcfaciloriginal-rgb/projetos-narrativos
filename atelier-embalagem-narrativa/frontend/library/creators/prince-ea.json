@@ -1,0 +1,79 @@
+{
+  "name": "Prince Ea",
+  "category": "criador",
+  "essence": "autoridade emocional cinematográfica com confronto intelectual",
+  "core_principles": [
+    "parecer uma conversa séria, não um truque de internet",
+    "tensão cognitiva com coerência temática",
+    "poucos elementos, alta presença",
+    "impacto por dignidade visual"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "verdade incômoda",
+      "mentira social",
+      "despertar",
+      "confronto moral"
+    ],
+    "composition_tendencies": [
+      "rosto dominante",
+      "olhar direto ou levemente desviado",
+      "fundo desfocado",
+      "espaço negativo",
+      "símbolo ocasional"
+    ],
+    "symbol_families": [
+      "máscara",
+      "ampulheta",
+      "livro",
+      "corrente",
+      "diploma",
+      "espelho"
+    ],
+    "visual_traits": [
+      "baixo ruído",
+      "prestígio visual",
+      "intensidade contida",
+      "clareza imediata"
+    ],
+    "color_language": [
+      "tons sóbrios",
+      "teal and orange",
+      "marrom",
+      "preto",
+      "luz quente controlada"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "afirmação provocativa",
+      "contradição moral",
+      "frase curta de alto atrito",
+      "declaração que desafia crença"
+    ],
+    "preferred_tone": [
+      "forte",
+      "contemplativo",
+      "moralmente tenso",
+      "humano"
+    ],
+    "avoid": [
+      "exagero carnavalesco",
+      "muitos elementos visuais",
+      "texto explicativo demais na thumb"
+    ]
+  },
+  "emotional_field": [
+    "empatia",
+    "incômodo",
+    "urgência moral",
+    "verdade",
+    "vulnerabilidade"
+  ],
+  "warnings": [
+    "não copiar frases famosas",
+    "não imitar enquadramentos literalmente",
+    "usar a lógica do estilo, não a superfície"
+  ],
+  "inspiration_mode": "usar como referência de presença, silêncio e confronto intelectual"
+}

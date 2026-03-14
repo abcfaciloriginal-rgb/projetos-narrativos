@@ -1,0 +1,79 @@
+{
+  "name": "MrBeast",
+  "category": "criador",
+  "essence": "clareza extrema, decisão instantânea e promessa visual inequívoca",
+  "core_principles": [
+    "o olho precisa parar em menos de um segundo",
+    "o conflito deve ser entendido quase sem leitura",
+    "um foco dominante vence composição confusa",
+    "escala e contraste acima de detalhe"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "desafio",
+      "escala absurda",
+      "risco controlado",
+      "resultado extremo"
+    ],
+    "composition_tendencies": [
+      "elemento principal enorme",
+      "emoção legível",
+      "contraste alto",
+      "hierarquia visual muito clara"
+    ],
+    "symbol_families": [
+      "dinheiro",
+      "botão",
+      "contador",
+      "objeto gigante",
+      "prêmio",
+      "número visual"
+    ],
+    "visual_traits": [
+      "alta saliência",
+      "leitura instantânea",
+      "foco único",
+      "baixa ambiguidade"
+    ],
+    "color_language": [
+      "cores vibrantes",
+      "azul",
+      "amarelo",
+      "vermelho",
+      "contraste agressivo"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "eu fiz ...",
+      "sobrevivi a ...",
+      "passei ... dias ...",
+      "dei ... para ...",
+      "o maior ... de todos"
+    ],
+    "preferred_tone": [
+      "direto",
+      "imediato",
+      "energético",
+      "claro"
+    ],
+    "avoid": [
+      "ambiguidade excessiva",
+      "metáfora difícil",
+      "thumbnail contemplativa demais"
+    ]
+  },
+  "emotional_field": [
+    "surpresa",
+    "urgência",
+    "ambição",
+    "escala",
+    "competição"
+  ],
+  "warnings": [
+    "não importar esse estilo inteiro para nichos filosóficos",
+    "não sacrificar retenção por clique fácil",
+    "não exagerar ruído visual"
+  ],
+  "inspiration_mode": "usar como referência de clareza, teste de scroll e hierarquia visual"
+}

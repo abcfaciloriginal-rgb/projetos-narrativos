@@ -87,58 +87,87 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function generatePackageWithAI() {
-    const provider = "gemini";
 
-    const selectedCreator = creativeReference?.value || "";
-    const selectedSymbolTheme = symbolTheme?.value || "";
-    const selectedNiche = videoNiche?.value || "";
-    const selectedVisualLanguage = visualLanguage?.value || "";
+  const provider = "gemini";
 
-    const [creatorData, nicheData, visualLanguageData, symbolData] =
-      await Promise.all([
-        loadCreator(selectedCreator),
-        loadNiche(selectedNiche),
-        loadVisualLanguage(selectedVisualLanguage),
-        loadSymbolTheme(selectedSymbolTheme)
-      ]);
+  const selectedCreator = creativeReference?.value || "";
+  const selectedSymbolTheme = symbolTheme?.value || "";
+  const selectedNiche = videoNiche?.value || "";
+  const selectedVisualLanguage = visualLanguage?.value || "";
 
-    const referenceContext = buildReferenceContext({
-      creator: creatorData,
-      niche: nicheData,
-      visualLanguage: visualLanguageData,
-      symbolTheme: symbolData
-    });
+  const [creatorData, nicheData, visualLanguageData, symbolData] =
+    await Promise.all([
+      loadCreator(selectedCreator),
+      loadNiche(selectedNiche),
+      loadVisualLanguage(selectedVisualLanguage),
+      loadSymbolTheme(selectedSymbolTheme)
+    ]);
 
-    console.log("Contexto criativo carregado:", referenceContext);
+  const referenceContext = buildReferenceContext({
+    creator: creatorData,
+    niche: nicheData,
+    visualLanguage: visualLanguageData,
+    symbolTheme: symbolData
+  });
 
-    const result = await requestPackaging({
-      provider,
-      story: storyFull.value.trim(),
-      niche: selectedNiche,
-      tone: selectedVisualLanguage,
-      summary: storySummary?.value.trim() || "",
-      logline: storyLogline?.value.trim() || "",
-      theme: themeCentral?.value.trim() || "",
-      emotion: emotionDominant?.value || "",
-      wound: coreWound?.value.trim() || "",
-      contradiction: humanContradiction?.value.trim() || "",
-      symbol: symbolMain?.value.trim() || "",
-      subtext: subtextCentral?.value.trim() || "",
-      referenceContext
-    });
+  console.log("Contexto criativo carregado:", referenceContext);
 
-    const parsed = safeParseJson(result.raw_text);
-    if (!parsed) {
-      throw new Error("A IA respondeu, mas o JSON não pôde ser lido.");
-    }
+  const result = await requestPackaging({
+    provider,
+    story: storyFull.value.trim(),
+    niche: selectedNiche,
+    tone: selectedVisualLanguage,
+    summary: storySummary?.value.trim() || "",
+    logline: storyLogline?.value.trim() || "",
+    theme: themeCentral?.value.trim() || "",
+    emotion: emotionDominant?.value || "",
+    wound: coreWound?.value.trim() || "",
+    contradiction: humanContradiction?.value.trim() || "",
+    symbol: symbolMain?.value.trim() || "",
+    subtext: subtextCentral?.value.trim() || "",
+    referenceContext
+  });
 
-    renderTitlesFromAI(parsed.titles || []);
-    renderThumbnailsFromAI(parsed.thumbnails || []);
-    renderThumbTextsFromAI(parsed.thumb_texts || []);
-    renderCombosFromAI(parsed.combos || []);
-    renderAnalysis();
-    renderFinalDirection();
+  console.log("Resposta da IA:", result);
+
+  const parsed = safeParseJson(result.raw_text);
+
+  if (!parsed) {
+
+    console.warn("IA respondeu, mas JSON não pôde ser lido. Usando fallback local.");
+
+    generatePackageLocally();
+
+    return;
   }
+
+  const titles = parsed.titles || [];
+  const thumbnails = parsed.thumbnails || [];
+  const thumbTexts = parsed.thumb_texts || [];
+  const combos = parsed.combos || [];
+
+  if (
+    titles.length === 0 &&
+    thumbnails.length === 0 &&
+    thumbTexts.length === 0 &&
+    combos.length === 0
+  ) {
+
+    console.warn("IA não retornou estrutura esperada. Usando fallback local.");
+
+    generatePackageLocally();
+
+    return;
+  }
+
+  renderTitlesFromAI(titles);
+  renderThumbnailsFromAI(thumbnails);
+  renderThumbTextsFromAI(thumbTexts);
+  renderCombosFromAI(combos);
+
+  renderAnalysis();
+  renderFinalDirection();
+}
 
   function renderTitles() {
     const tabTitles = document.getElementById("tab-titles");
@@ -532,21 +561,33 @@ document.addEventListener("DOMContentLoaded", function () {
     btnGeneratePackage.textContent = "Gerando...";
 
     try {
-      await generatePackageWithAI();
-      sessionStatus.value = "embalagem-gerada";
-      updateWorkflowStep(2);
-      alert("Embalagem gerada com IA.");
-    } catch (error) {
-      console.error(error);
-      generatePackageLocally();
-      sessionStatus.value = "embalagem-gerada";
-      updateWorkflowStep(2);
-      alert("API indisponível. Usei a geração local como fallback.");
-    } finally {
-      btnGeneratePackage.disabled = false;
-      btnGeneratePackage.textContent = "Gerar Embalagem";
-    }
+  await generatePackageWithAI();
+  sessionStatus.value = "embalagem-gerada";
+  updateWorkflowStep(2);
+  alert("Embalagem gerada com IA.");
+
+} catch (error) {
+
+  console.error("ERRO DA API:", error);
+
+  alert(
+    "Erro ao chamar a API:\n\n" +
+    (error.message || "Erro desconhecido") +
+    "\n\nVeja o console do navegador (F12) para mais detalhes."
+  );
+
+  generatePackageLocally();
+  sessionStatus.value = "embalagem-gerada";
+  updateWorkflowStep(2);
+
+} finally {
+
+  btnGeneratePackage.disabled = false;
+  btnGeneratePackage.textContent = "Gerar Embalagem";
+
+}
   });
+
 
   btnRefineSelected?.addEventListener("click", function () {
     alert("Na próxima etapa vamos transformar este botão em refinamento real por item selecionado.");
