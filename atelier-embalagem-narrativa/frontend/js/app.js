@@ -105,7 +105,8 @@ nicheData,
 visualLanguageData,
 symbolData,
 clickPsychology,
-suspenseEngine
+suspenseEngine,
+storyLoopEngine
 ] = await Promise.all([
 
 loadCreator(selectedCreator),
@@ -113,10 +114,10 @@ loadNiche(selectedNiche),
 loadVisualLanguage(selectedVisualLanguage),
 loadSymbolTheme(selectedSymbolTheme),
 loadEngine("click_psychology"),
-loadEngine("suspense_hitchcock")
+loadEngine("suspense_hitchcock"),
+loadEngine("story_loop_engine")
 
 ]);
-
   const referenceContext = buildReferenceContext({
 
 creator: creatorData,
@@ -124,7 +125,8 @@ niche: nicheData,
 visualLanguage: visualLanguageData,
 symbolTheme: symbolData,
 clickPsychology,
-suspenseEngine
+suspenseEngine,
+storyLoopEngine
 
 });
 

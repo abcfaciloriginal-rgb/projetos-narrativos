@@ -1,0 +1,74 @@
+{
+  "name": "Story Loop Engine",
+  "category": "editorial_engine",
+  "essence": "abrir perguntas narrativas que o cérebro precisa fechar",
+
+  "core_principles": [
+    "o cérebro busca fechar histórias incompletas",
+    "quanto mais simples a pergunta, mais forte o loop",
+    "o título abre o loop, o vídeo fecha",
+    "loops narrativos aumentam retenção"
+  ],
+
+  "loop_mechanics": [
+    "pergunta implícita",
+    "contradição humana",
+    "erro que gera consequência",
+    "revelação adiada",
+    "segredo oculto"
+  ],
+
+  "title_loops": {
+    "patterns": [
+      "ele só percebeu quando já era tarde",
+      "o erro que mudou tudo",
+      "o detalhe que ninguém viu",
+      "o momento que revelou tudo",
+      "o que aconteceu depois mudou tudo"
+    ],
+
+    "structures": [
+      "situação → consequência invisível",
+      "erro → revelação",
+      "ação → preço oculto",
+      "pergunta → promessa de resposta"
+    ],
+
+    "avoid": [
+      "explicar o final no título",
+      "perguntas genéricas",
+      "loops sem payoff"
+    ]
+  },
+
+  "visual_loops": {
+    "thumbnail_patterns": [
+      "personagem reagindo a algo fora do quadro",
+      "objeto simbólico com contexto oculto",
+      "expressão emocional forte",
+      "momento imediatamente antes da revelação"
+    ],
+
+    "composition_rules": [
+      "mostrar consequência sem mostrar causa",
+      "sugerir história em uma imagem",
+      "contraste emocional claro",
+      "leitura imediata"
+    ]
+  },
+
+  "emotional_field": [
+    "curiosidade",
+    "tensão",
+    "antecipação",
+    "surpresa"
+  ],
+
+  "warnings": [
+    "não abrir loops falsos",
+    "não criar perguntas sem resposta",
+    "não confundir mistério com confusão"
+  ],
+
+  "inspiration_mode": "usar para abrir perguntas narrativas que o espectador precisa fechar"
+}
