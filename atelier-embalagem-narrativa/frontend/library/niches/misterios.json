@@ -1,0 +1,80 @@
+{
+  "name": "Mistérios",
+  "category": "nicho",
+  "essence": "curiosidade intensa criada pela sensação de que algo está oculto",
+  "core_principles": [
+    "curiosidade antes da resposta",
+    "informação incompleta gera tensão",
+    "sugestão visual em vez de explicação",
+    "sombra é narrativa"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "segredo",
+      "revelação oculta",
+      "tensão silenciosa",
+      "descoberta inesperada"
+    ],
+    "composition_tendencies": [
+      "elemento parcialmente oculto",
+      "personagem olhando algo fora do quadro",
+      "objeto iluminado na sombra",
+      "profundidade escura"
+    ],
+    "symbol_families": [
+      "porta entreaberta",
+      "chave",
+      "corredor escuro",
+      "olho",
+      "documento",
+      "relógio parado",
+      "luz distante"
+    ],
+    "visual_traits": [
+      "alto contraste",
+      "luz recortada",
+      "sombra dominante",
+      "foco dramático"
+    ],
+    "color_language": [
+      "preto",
+      "azul profundo",
+      "vermelho discreto",
+      "luz branca recortada",
+      "tons frios"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "o segredo por trás de...",
+      "o que ninguém percebeu sobre...",
+      "a verdade escondida em...",
+      "o detalhe que mudou tudo...",
+      "o mistério que ninguém explica..."
+    ],
+    "preferred_tone": [
+      "intrigante",
+      "tenso",
+      "curioso",
+      "dramático"
+    ],
+    "avoid": [
+      "explicar demais",
+      "revelar o mistério no título",
+      "exagerar no sensacionalismo"
+    ]
+  },
+  "emotional_field": [
+    "curiosidade",
+    "tensão",
+    "surpresa",
+    "descoberta",
+    "expectativa"
+  ],
+  "warnings": [
+    "não revelar demais no título",
+    "evitar visual confuso",
+    "não transformar mistério em explicação longa"
+  ],
+  "inspiration_mode": "usar como gramática de tensão visual e curiosidade narrativa"
+}

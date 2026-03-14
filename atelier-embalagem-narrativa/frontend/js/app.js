@@ -1,10 +1,11 @@
 import { requestPackaging } from "./api-client.js";
 import {
-  loadCreator,
-  loadNiche,
-  loadVisualLanguage,
-  loadSymbolTheme,
-  buildReferenceContext
+loadCreator,
+loadNiche,
+loadVisualLanguage,
+loadSymbolTheme,
+loadEngine,
+buildReferenceContext
 } from "./library-loader.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -16,6 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const sessionStatus = document.getElementById("session-status");
 
   const creativeReference = document.getElementById("creative-reference");
+ 
+ const aiProvider = document.getElementById("ai-provider");
+
   const symbolTheme = document.getElementById("symbol-theme");
   const videoNiche = document.getElementById("video-niche");
   const visualLanguage = document.getElementById("visual-language");
@@ -88,27 +92,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function generatePackageWithAI() {
 
-  const provider = "gemini";
+  const provider = aiProvider?.value || "gemini";
 
   const selectedCreator = creativeReference?.value || "";
   const selectedSymbolTheme = symbolTheme?.value || "";
   const selectedNiche = videoNiche?.value || "";
   const selectedVisualLanguage = visualLanguage?.value || "";
 
-  const [creatorData, nicheData, visualLanguageData, symbolData] =
-    await Promise.all([
-      loadCreator(selectedCreator),
-      loadNiche(selectedNiche),
-      loadVisualLanguage(selectedVisualLanguage),
-      loadSymbolTheme(selectedSymbolTheme)
-    ]);
+  const [
+creatorData,
+nicheData,
+visualLanguageData,
+symbolData,
+clickPsychology,
+suspenseEngine
+] = await Promise.all([
+
+loadCreator(selectedCreator),
+loadNiche(selectedNiche),
+loadVisualLanguage(selectedVisualLanguage),
+loadSymbolTheme(selectedSymbolTheme),
+loadEngine("click_psychology"),
+loadEngine("suspense_hitchcock")
+
+]);
 
   const referenceContext = buildReferenceContext({
-    creator: creatorData,
-    niche: nicheData,
-    visualLanguage: visualLanguageData,
-    symbolTheme: symbolData
-  });
+
+creator: creatorData,
+niche: nicheData,
+visualLanguage: visualLanguageData,
+symbolTheme: symbolData,
+clickPsychology,
+suspenseEngine
+
+});
 
   console.log("Contexto criativo carregado:", referenceContext);
 
@@ -130,16 +148,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
   console.log("Resposta da IA:", result);
 
-  const parsed = safeParseJson(result.raw_text);
+  let parsed = safeParseJson(result.raw_text);
 
-  if (!parsed) {
+if (!parsed) {
 
-    console.warn("IA respondeu, mas JSON não pôde ser lido. Usando fallback local.");
+console.warn("JSON inválido. Tentando novamente...");
 
-    generatePackageLocally();
+const retry = await requestPackaging({
+provider,
+story: storyFull.value.trim(),
+niche: selectedNiche,
+tone: selectedVisualLanguage,
+summary: storySummary?.value.trim() || "",
+logline: storyLogline?.value.trim() || "",
+theme: themeCentral?.value.trim() || "",
+emotion: emotionDominant?.value || "",
+wound: coreWound?.value.trim() || "",
+contradiction: humanContradiction?.value.trim() || "",
+symbol: symbolMain?.value.trim() || "",
+subtext: subtextCentral?.value.trim() || "",
+referenceContext
+});
 
-    return;
-  }
+parsed = safeParseJson(retry.raw_text);
+
+if (!parsed) {
+
+console.warn("Retry também falhou. Usando fallback local.");
+
+generatePackageLocally();
+return;
+
+}
+
+}
 
   const titles = parsed.titles || [];
   const thumbnails = parsed.thumbnails || [];
@@ -176,12 +218,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!tabTitles) return;
 
     const titles = [
-      "Ele Só Entendeu Quando Já Era Tarde",
-      "O Que Esta História Revela em Silêncio",
-      `${titleBase}: A Ferida Que Ninguém Viu`,
-      "O Orgulho Também Destrói em Silêncio",
-      "Nem Toda Perda Faz Barulho"
-    ];
+
+applyCuriosityGap(titleBase),
+
+"Ele Só Entendeu Quando Já Era Tarde",
+
+"O Que Esta História Revela em Silêncio",
+
+`${titleBase}: A Ferida Que Ninguém Viu`,
+
+"Nem Toda Perda Faz Barulho"
+
+];
 
     tabTitles.innerHTML = titles
       .map(
@@ -490,6 +538,26 @@ document.addEventListener("DOMContentLoaded", function () {
     return "O que só se percebe quando já é tarde?";
   }
 
+function applyCuriosityGap(title) {
+
+if (!title) return title;
+
+const patterns = [
+
+"o que ninguém percebeu",
+"o detalhe que mudou tudo",
+"o erro que quase todos cometem",
+"o lado que ninguém vê",
+"o momento em que tudo mudou"
+
+];
+
+const pattern = patterns[Math.floor(Math.random()*patterns.length)];
+
+return `${pattern} em: ${title}`;
+
+}
+
   function generateClickPromise() {
     const theme = themeCentral?.value.trim() || "";
     const wound = coreWound?.value.trim() || "";
@@ -520,24 +588,36 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function safeParseJson(text) {
-    if (!text) return null;
 
-    try {
-      return JSON.parse(text);
-    } catch {
-      const cleaned = text
-        .replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        .replace(/```$/i, "")
-        .trim();
+if (!text) return null;
 
-      try {
-        return JSON.parse(cleaned);
-      } catch {
-        return null;
-      }
-    }
-  }
+try {
+return JSON.parse(text);
+} catch {}
+
+let cleaned = text
+.replace(/```json/gi,"")
+.replace(/```/g,"")
+.trim();
+
+const start = cleaned.indexOf("{");
+const end = cleaned.lastIndexOf("}");
+
+if (start !== -1 && end !== -1) {
+cleaned = cleaned.substring(start, end + 1);
+}
+
+try {
+return JSON.parse(cleaned);
+} catch {
+
+console.warn("Falha ao interpretar JSON da IA.");
+
+return null;
+
+}
+
+ }
 
   btnAnalyzeStory?.addEventListener("click", function () {
     if (!validateStoryInput()) {

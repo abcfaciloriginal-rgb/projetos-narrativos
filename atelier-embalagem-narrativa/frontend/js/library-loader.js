@@ -44,6 +44,30 @@ export async function loadSymbolTheme(theme) {
   return symbols[normalized] || null;
 }
 
+export async function loadEngine(name) {
+
+if (!name) return null;
+
+try {
+
+const response = await fetch(`/library/engines/${name}.json`);
+
+if (!response.ok) {
+console.warn(`Engine não encontrada: ${name}`);
+return null;
+}
+
+return await response.json();
+
+} catch (error) {
+
+console.warn("Erro ao carregar engine:", name);
+return null;
+
+}
+
+}
+
 export function buildReferenceContext({
   creator,
   niche,

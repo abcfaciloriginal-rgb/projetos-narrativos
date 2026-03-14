@@ -1,0 +1,89 @@
+{
+  "name": "Click Psychology",
+  "category": "editorial_engine",
+  "essence": "mecanismos psicológicos que despertam curiosidade e retenção sem cair em clickbait vulgar",
+
+  "core_principles": [
+    "curiosidade nasce de informação incompleta",
+    "tensão emocional aumenta a retenção",
+    "o cérebro busca fechamento de loops narrativos",
+    "menos promessa explícita, mais pergunta implícita"
+  ],
+
+  "curiosity_drivers": [
+    "informação incompleta",
+    "contradição inesperada",
+    "revelação adiada",
+    "detalhe estranho que exige explicação"
+  ],
+
+  "title_mechanics": {
+    "patterns": [
+      "o que ninguém percebeu em...",
+      "o detalhe que mudou tudo...",
+      "o momento em que tudo mudou...",
+      "o erro que quase todos cometem...",
+      "nem tudo é o que parece..."
+    ],
+
+    "structures": [
+      "promessa + mistério",
+      "contradição humana",
+      "pergunta implícita",
+      "revelação atrasada"
+    ],
+
+    "avoid": [
+      "clickbait vulgar",
+      "promessa exagerada",
+      "explicação completa no título",
+      "sensacionalismo vazio"
+    ]
+  },
+
+  "thumbnail_psychology": {
+    "attention_triggers": [
+      "olhar humano intenso",
+      "expressão emocional clara",
+      "contraste forte de luz",
+      "objeto simbólico isolado"
+    ],
+
+    "composition_rules": [
+      "máximo 1 ou 2 elementos principais",
+      "leitura em menos de 1 segundo",
+      "contraste visual forte",
+      "texto mínimo"
+    ],
+
+    "text_rules": [
+      "máximo 3 palavras",
+      "fonte grande",
+      "alto contraste",
+      "texto emocional ou intrigante"
+    ]
+  },
+
+  "retention_mechanics": [
+    "abrir uma pergunta invisível no título",
+    "sugerir revelação futura",
+    "criar tensão emocional inicial",
+    "conectar curiosidade com emoção"
+  ],
+
+  "emotional_triggers": [
+    "curiosidade",
+    "surpresa",
+    "incômodo",
+    "empatia",
+    "descoberta"
+  ],
+
+  "warnings": [
+    "não prometer mais do que o vídeo entrega",
+    "não revelar a resposta no título",
+    "não saturar a miniatura com elementos"
+  ],
+
+  "inspiration_mode": "usar como gramática psicológica para despertar curiosidade e retenção sem comprometer credibilidade"
+}

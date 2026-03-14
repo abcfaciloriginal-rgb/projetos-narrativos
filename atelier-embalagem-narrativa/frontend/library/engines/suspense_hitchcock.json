@@ -1,0 +1,82 @@
+{
+  "name": "Hitchcock Suspense Engine",
+  "category": "editorial_engine",
+  "essence": "criar tensão emocional através de informação parcial e antecipação",
+
+  "core_principles": [
+    "o público deve saber que algo está errado",
+    "a tensão nasce da antecipação, não da surpresa",
+    "mostrar o perigo antes do personagem perceber",
+    "usar silêncio e tempo para aumentar a expectativa"
+  ],
+
+  "suspense_mechanics": [
+    "informação assimétrica entre público e personagem",
+    "detalhe visual que indica perigo",
+    "tempo prolongado antes da revelação",
+    "contraste entre calma aparente e risco oculto"
+  ],
+
+  "visual_grammar": {
+    "composition_patterns": [
+      "personagem em primeiro plano, perigo no fundo",
+      "objeto simbólico que indica risco",
+      "olhar do personagem para fora do quadro",
+      "luz dramática isolando elemento suspeito"
+    ],
+
+    "symbol_families": [
+      "relógio",
+      "porta entreaberta",
+      "sombra humana",
+      "escada",
+      "janela",
+      "telefone",
+      "luz no escuro"
+    ],
+
+    "visual_traits": [
+      "alto contraste",
+      "foco em detalhe suspeito",
+      "espaço negativo",
+      "composição que sugere movimento ou espera"
+    ]
+  },
+
+  "title_mechanics": {
+    "patterns": [
+      "ele não percebeu que...",
+      "o detalhe que indicava perigo...",
+      "ninguém percebeu o que estava acontecendo...",
+      "o momento antes de tudo dar errado...",
+      "o sinal que todos ignoraram..."
+    ],
+
+    "preferred_tone": [
+      "tenso",
+      "misterioso",
+      "intrigante"
+    ],
+
+    "avoid": [
+      "revelar o final",
+      "explicar o perigo diretamente",
+      "sensacionalismo exagerado"
+    ]
+  },
+
+  "emotional_field": [
+    "tensão",
+    "ansiedade",
+    "curiosidade",
+    "antecipação"
+  ],
+
+  "warnings": [
+    "não revelar o perigo cedo demais",
+    "não saturar a miniatura com elementos",
+    "não transformar suspense em explicação"
+  ],
+
+  "inspiration_mode": "usar como gramática de antecipação e tensão crescente"
+}

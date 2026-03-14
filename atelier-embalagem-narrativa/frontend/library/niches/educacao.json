@@ -1,0 +1,80 @@
+{
+  "name": "Educação",
+  "category": "nicho",
+  "essence": "história simples que revela uma verdade humana através de contraste ou descoberta",
+  "core_principles": [
+    "mostrar a lição através da ação",
+    "clareza antes de complexidade",
+    "contraste entre erro e descoberta",
+    "simplicidade visual"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "erro humano",
+      "descoberta",
+      "aprendizado",
+      "mudança de perspectiva"
+    ],
+    "composition_tendencies": [
+      "momento de descoberta",
+      "objeto simbólico em destaque",
+      "contraste antes/depois",
+      "personagem em reflexão"
+    ],
+    "symbol_families": [
+      "livro",
+      "quadro negro",
+      "lâmpada",
+      "caminho",
+      "porta aberta",
+      "ponte",
+      "escada"
+    ],
+    "visual_traits": [
+      "composição clara",
+      "foco no gesto humano",
+      "contraste simples",
+      "leitura imediata"
+    ],
+    "color_language": [
+      "tons naturais",
+      "azul claro",
+      "amarelo suave",
+      "verde",
+      "contraste moderado"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "o erro que quase todos cometem...",
+      "o que ninguém te conta sobre...",
+      "a lição escondida em...",
+      "o momento em que ele percebeu...",
+      "o dia em que tudo fez sentido"
+    ],
+    "preferred_tone": [
+      "claro",
+      "humano",
+      "reflexivo",
+      "acessível"
+    ],
+    "avoid": [
+      "tom professoral",
+      "linguagem técnica",
+      "explicação excessiva"
+    ]
+  },
+  "emotional_field": [
+    "descoberta",
+    "clareza",
+    "surpresa",
+    "insight",
+    "transformação"
+  ],
+  "warnings": [
+    "não transformar em aula",
+    "evitar excesso de texto na thumbnail",
+    "não perder o elemento humano"
+  ],
+  "inspiration_mode": "usar como gramática de clareza narrativa e descoberta humana"
+}

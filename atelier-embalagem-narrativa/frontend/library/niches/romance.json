@@ -1,0 +1,80 @@
+{
+  "name": "Romance",
+  "category": "nicho",
+  "essence": "tensão emocional entre duas pessoas onde o silêncio diz mais que as palavras",
+  "core_principles": [
+    "emoção antes da explicação",
+    "olhar e gesto contam mais que diálogo",
+    "o conflito é interno e relacional",
+    "intimidade visual em vez de espetáculo"
+  ],
+  "visual_grammar": {
+    "core_ideas": [
+      "amor impossível",
+      "reencontro",
+      "saudade",
+      "perda silenciosa"
+    ],
+    "composition_tendencies": [
+      "dois personagens em tensão",
+      "distância física simbólica",
+      "mãos próximas sem se tocar",
+      "olhar interrompido"
+    ],
+    "symbol_families": [
+      "aliança",
+      "fotografia",
+      "carta",
+      "cadeira vazia",
+      "janela",
+      "chuva",
+      "mesa de café"
+    ],
+    "visual_traits": [
+      "luz suave",
+      "close emocional",
+      "fundo desfocado",
+      "expressão facial forte"
+    ],
+    "color_language": [
+      "tons quentes",
+      "vermelho discreto",
+      "bege",
+      "azul crepuscular",
+      "contraste suave"
+    ]
+  },
+  "title_grammar": {
+    "patterns": [
+      "ela nunca soube que...",
+      "o dia em que ele percebeu...",
+      "nem todo amor...",
+      "o que ficou depois que...",
+      "o erro que separou..."
+    ],
+    "preferred_tone": [
+      "emocional",
+      "íntimo",
+      "nostálgico",
+      "delicado"
+    ],
+    "avoid": [
+      "drama exagerado",
+      "clichê romântico óbvio",
+      "promessas melodramáticas"
+    ]
+  },
+  "emotional_field": [
+    "saudade",
+    "desejo",
+    "arrependimento",
+    "ternura",
+    "melancolia"
+  ],
+  "warnings": [
+    "evitar clichê visual romântico",
+    "não exagerar na sentimentalidade",
+    "evitar linguagem novelesca"
+  ],
+  "inspiration_mode": "usar como gramática emocional e de intimidade visual, nunca como molde rígido"
+}
