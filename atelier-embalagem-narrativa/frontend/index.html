@@ -249,6 +249,7 @@ Gerar Embalagem
 
 <button class="tab-button" data-tab="analysis">Análise</button>
 
+<button class="tab-button" data-tab="debug">Debug IA</button>
 </div>
 
 
@@ -258,7 +259,18 @@ Gerar Embalagem
 <div id="tab-thumbtexts" class="tab-panel"></div>
 <div id="tab-combos" class="tab-panel"></div>
 <div id="tab-analysis" class="tab-panel"></div>
+<div id="tab-debug-ia" class="tab-panel">
 
+<h3>Prompt enviado</h3>
+<pre id="debug-prompt" class="debug-box"></pre>
+
+<h3>Resposta bruta da IA</h3>
+<pre id="debug-response" class="debug-box"></pre>
+
+<h3>JSON interpretado</h3>
+<pre id="debug-json" class="debug-box"></pre>
+
+</div>
 
 <div class="panel-section refine-section">
 <button type="button" id="btn-refine-selected">

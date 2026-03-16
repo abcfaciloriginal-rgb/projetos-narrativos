@@ -121,6 +121,16 @@ body {
   color: #bfbfbf;
 }
 
+
+.debug-box {
+background:#0f1115;
+color:#00ff9c;
+padding:10px;
+border-radius:4px;
+font-size:12px;
+overflow:auto;
+max-height:250px;
+}
 /* CAMPOS */
 
 .field-group {

@@ -46,25 +46,27 @@ export async function loadSymbolTheme(theme) {
 
 export async function loadEngine(name) {
 
-if (!name) return null;
+  const normalized = normalizeValue(name);
+  if (!normalized) return null;
 
-try {
+  try {
 
-const response = await fetch(`/library/engines/${name}.json`);
+    const path = `${LIBRARY_BASE}/engines/${normalized}.json`;
+    const response = await fetch(path);
 
-if (!response.ok) {
-console.warn(`Engine não encontrada: ${name}`);
-return null;
-}
+    if (!response.ok) {
+      console.warn(`Engine não encontrada: ${normalized}`);
+      return null;
+    }
 
-return await response.json();
+    return await response.json();
 
-} catch (error) {
+  } catch (error) {
 
-console.warn("Erro ao carregar engine:", name);
-return null;
+    console.warn("Erro ao carregar engine:", normalized);
+    return null;
 
-}
+  }
 
 }
 
