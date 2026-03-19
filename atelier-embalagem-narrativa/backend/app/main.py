@@ -29,27 +29,46 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------
-# LOCALIZAR FRONTEND AUTOMATICAMENTE
+# LOCALIZAR FRONTEND
 # ---------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
 
 if not FRONTEND_DIR.exists():
     raise RuntimeError(f"Frontend não encontrado em: {FRONTEND_DIR}")
 
-# servir arquivos estáticos
 app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
 app.mount("/library", StaticFiles(directory=FRONTEND_DIR / "library"), name="library")
 
-# página principal
+LIBRARY_DIR = FRONTEND_DIR / "library"
+
+
+@app.get("/api/library")
+def get_library():
+    result = {}
+
+    for category in ["niches", "creators", "visual_languages", "symbols"]:
+        category_path = LIBRARY_DIR / category
+        items = []
+
+        if category_path.exists():
+            for file in category_path.glob("*.json"):
+                items.append(file.stem)
+
+        result[category] = items
+
+    return result
+
+
 @app.get("/")
 async def index():
     return FileResponse(FRONTEND_DIR / "index.html")
 
+
 # ---------------------------------------------------
-# MODELO DE DADOS
+# MODELO
 # ---------------------------------------------------
 
 class PackagingRequest(BaseModel):
@@ -150,11 +169,20 @@ async def generate_packaging(payload: PackagingRequest):
     if not payload.story or len(payload.story.strip()) < 30:
         raise HTTPException(status_code=400, detail="História muito curta.")
 
-    if payload.provider == "gemini":
-        return await call_gemini(payload)
+    try:
 
-    if payload.provider == "openai":
-        return await call_openai(payload)
+        if payload.provider == "gemini":
+            return await call_gemini(payload)
+
+        if payload.provider == "openai":
+            return await call_openai(payload)
+
+    except Exception as e:
+
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
     raise HTTPException(status_code=400, detail="Provider inválido.")
 
@@ -189,11 +217,22 @@ async def call_openai(payload: PackagingRequest):
             json=body,
         )
 
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Erro OpenAI")
+
     data = response.json()
 
+    text_output = ""
+
+    try:
+        text_output = data["output"][0]["content"][0]["text"]
+    except:
+        text_output = str(data)
+
     return {
+        "status": "ok",
         "provider": "openai",
-        "raw_text": data,
+        "raw_text": text_output,
         "raw_response": data,
     }
 
@@ -229,6 +268,9 @@ async def call_gemini(payload: PackagingRequest):
 
         response = await client.post(url, headers=headers, json=body)
 
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Erro Gemini")
+
     data = response.json()
 
     text_output = ""
@@ -244,6 +286,7 @@ async def call_gemini(payload: PackagingRequest):
         )
 
     return {
+        "status": "ok",
         "provider": "gemini",
         "raw_text": text_output,
         "raw_response": data
