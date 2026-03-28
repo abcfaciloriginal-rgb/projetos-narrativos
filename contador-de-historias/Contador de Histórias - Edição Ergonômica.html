@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contador de Histórias - Edição Ergonômica</title>
+
+<style>
+  :root {
+    --bg:#0b0f14;
+    --panel:#0f1620;
+    --panel2:#0b1220;
+    --border:#1f2a37;
+    --text:#e6edf3;
+    --muted:#bfb6d9;
+    --accent:#b57aff;
+    --btn:#1f6feb;
+    --btn2:#223043;
+  }
+  
+  /* Ajuste para rolagem natural e sem saltos */
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 18px;
+    min-height: 100vh;
+    overflow-y: auto; 
+    scroll-behavior: smooth;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ALTERAÇÃO PRINCIPAL: Removido o 'sticky' para a barra rolar com a página */
+  .topbar {
+    position: relative; 
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+  }
+
+  .brand {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  h1 {margin:0;font-size:28px;color:var(--accent);}
+  .row {display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  label {font-size:12px;color:var(--muted);}
+  
+  select, input {
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:8px 12px;
+    outline:none;
+  }
+  
+  input[type="number"] {width:74px;}
+  input[type="password"], input[type="text"] {min-width:220px;}
+  
+  .chef {
+    margin-top:15px;
+    padding:15px;
+    border-radius:14px;
+    border: 1px dashed var(--accent);
+    background: rgba(181, 122, 255, 0.05);
+  }
+  
+  .grid2 {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;}
+
+  .pipeline {
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+    padding-bottom: 150px; /* Espaço generoso no fim para facilitar o uso */
+  }
+
+  .stage {
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:var(--panel);
+    padding:20px;
+  }
+
+  .cols {display:grid;grid-template-columns: 1fr 1fr; gap:15px;}
+  @media(max-width:900px) { .cols {grid-template-columns: 1fr;} }
+
+  textarea {
+    width:100%;
+    min-height:220px;
+    resize:vertical;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:12px;
+    padding:12px;
+    font-size: 15px;
+    line-height:1.5;
+  }
+
+  /* Botões maiores para facilitar o clique com as mãos sensíveis */
+  button {
+    background:var(--btn);
+    border:0;
+    color:#fff;
+    padding:12px 20px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition: opacity 0.2s;
+  }
+  button.secondary {background:var(--btn2);}
+  button.ghost {background:transparent;border:1px solid var(--border);color:var(--text);}
+  .btnrow {display:flex;gap:12px;flex-wrap:wrap;margin-top:15px;}
+
+  .badge {padding:4px 10px; border:1px solid var(--accent); border-radius:999px; color:var(--accent); font-size:12px;}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>🎬 Contador de Histórias</h1>
+      <span class="badge">V8.3.4 • Modo Livre</span>
+    </div>
+
+    <div class="row" style="margin-top:15px;">
+      <div>
+        <label>Motor</label><br>
+        <select id="motor">
+          <option value="gemini">Gemini</option>
+          <option value="openai">OpenAI</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Modelo</label><br>
+        <select id="modelo">
+          <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+          <option value="gpt-4o">gpt-4o</option>
+        </select>
+      </div>
+
+      <div>
+        <label>API Key</label><br>
+        <input id="apiKey" type="password" placeholder="Sua chave aqui"/>
+      </div>
+    </div>
+
+    <div class="chef">
+      <div class="grid2">
+        <div>
+          <label>Público</label><br>
+          <select id="publico">
+            <option value="adulto">Adulto</option>
+            <option value="infantil">Infantil</option>
+          </select>
+        </div>
+        <div>
+          <label>Estilo</label><br>
+          <select id="estilo">
+            <option value="cinematografico">Cinematográfico</option>
+            <option value="literario">Literário</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline">
+    <div class="stage">
+      <h2>1. Lapidar Ideia</h2>
+      <div class="cols">
+        <textarea id="in_lapidar" placeholder="Escreva sua ideia bruta aqui..."></textarea>
+        <textarea id="out_lapidar" placeholder="Resultado refinado aparecerá aqui..."></textarea>
+      </div>
+      <div class="btnrow">
+        <button onclick="alert('Processando...')">Executar Lapidação</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <h2>2. Estruturar Roteiro</h2>
+      <div class="cols">
+        <textarea id="in_estruturar" placeholder="Entrada para estrutura..."></textarea>
+        <textarea id="out_estruturar" placeholder="Roteiro estruturado..."></textarea>
+      </div>
+      <div class="btnrow">
+        <button onclick="alert('Estruturando...')">Gerar Estrutura</button>
+      </div>
+    </div>
+    
+    </div>
+</div>
+
+</body>
+</html>

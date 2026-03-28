@@ -1,349 +1,212 @@
-// =============================
-// ATELIER DE EMBALAGEM NARRATIVA
-// app.js ESTABILIZADO
-// =============================
+// ===========================
+// ATELIER NARRATIVO
+// PIPELINE ESTILO "CONTADOR"
+// ===========================
 
+const ETAPAS_UI = ["lapidar", "embalar", "refinar"];
 
-// -----------------------------
-// UTILIDADES
-// -----------------------------
+const state = {
+  etapaAtual: "lapidar",
+  textosPorEtapa: {
+    lapidar: "",
+    embalar: "",
+    refinar: "",
+  },
+  entradaPorEtapa: {
+    lapidar: "",
+    embalar: "",
+    refinar: "",
+  },
+};
 
-function safeParseJson(text) {
-    try {
+const $ = (id) => document.getElementById(id);
 
-        if (!text) return null;
+function showResult(text) {
+  const box = $("result-box");
+  if (!box) return;
 
-        if (typeof text !== "string") {
-            return text;
-        }
+  if (box.tagName === "TEXTAREA" || box.tagName === "INPUT") {
+    box.value = text;
+  } else {
+    box.textContent = text;
+  }
+}
 
-        text = text.trim();
+function uiToState(stage) {
+  if (stage === "lapidar") {
+    state.entradaPorEtapa.lapidar = $("in_lapidar")?.value || "";
+    state.textosPorEtapa.lapidar = $("out_lapidar")?.value || "";
+  }
+  if (stage === "embalar") {
+    state.entradaPorEtapa.embalar = $("in_embalar")?.value || "";
+    state.textosPorEtapa.embalar = $("result-box")?.value || $("result-box")?.textContent || "";
+  }
+  if (stage === "refinar") {
+    state.entradaPorEtapa.refinar = $("in_refinar")?.value || "";
+    state.textosPorEtapa.refinar = $("out_refinar")?.value || "";
+  }
+}
 
-        // remove markdown
-        text = text.replace(/```json/g, "");
-        text = text.replace(/```/g, "");
-
-        // remove prefixo "json"
-        if (text.startsWith("json")) {
-            text = text.substring(4);
-        }
-
-        // remove lixo antes do primeiro {
-        const start = text.indexOf("{");
-        if (start !== -1) {
-            text = text.substring(start);
-        }
-
-        // remove lixo depois do último }
-        const end = text.lastIndexOf("}");
-        if (end !== -1) {
-            text = text.substring(0, end + 1);
-        }
-
-        return JSON.parse(text);
-
-    } catch (err) {
-
-        console.warn("Falha ao interpretar JSON:", err);
-        console.warn("Texto recebido:", text);
-
-        return null;
+function stateToUI(stage) {
+  if (stage === "lapidar") {
+    if ($("in_lapidar")) $("in_lapidar").value = state.entradaPorEtapa.lapidar || "";
+    if ($("out_lapidar")) $("out_lapidar").value = state.textosPorEtapa.lapidar || "";
+  }
+  if (stage === "embalar") {
+    if ($("in_embalar")) $("in_embalar").value = state.entradaPorEtapa.embalar || "";
+    const out = state.textosPorEtapa.embalar || "";
+    if ($("result-box")) {
+      if ($("result-box").tagName === "TEXTAREA" || $("result-box").tagName === "INPUT") {
+        $("result-box").value = out;
+      } else {
+        $("result-box").textContent = out;
+      }
     }
+  }
+  if (stage === "refinar") {
+    if ($("in_refinar")) $("in_refinar").value = state.entradaPorEtapa.refinar || "";
+    if ($("out_refinar")) $("out_refinar").value = state.textosPorEtapa.refinar || "";
+  }
 }
 
-
-
-// -----------------------------
-// DEBUG
-// -----------------------------
-
-function debugPrompt(prompt) {
-
-    const el = document.getElementById("debug-prompt");
-    if (el) el.textContent = prompt;
+function getNarrationReference(){
+  return document.getElementById("narration-ref").value;
 }
 
-function debugResponse(response) {
-
-    const el = document.getElementById("debug-response");
-    if (el) el.textContent = JSON.stringify(response, null, 2);
+function analyzeStoryLocal(text) {
+  if (!text || !text.trim()) {
+    alert("Insira a história.");
+    return "História vazia.";
+  }
+  
+  const narrationRef = getNarrationReference();
+  let analysis = "ANÁLISE LOCAL\n\nLogline (rústica):\n\n";
+  
+  const sentences = text.split(".").filter((s) => s.trim().length > 10);
+  const logline = sentences[0] || text.trim().slice(0, 200);
+  analysis += logline;
+  
+  if (narrationRef && narrationRef.trim()) {
+    analysis += "\n\nREFERÊNCIA DE ESTILO NARRATIVO:\n" + narrationRef + "\n\nINSTRUÇÃO:\nUse o estilo acima como influência.\nNÃO copie o texto.\nAbsorva ritmo, emoção e forma narrativa.";
+  }
+  
+  return analysis;
 }
 
-function debugJson(json) {
+async function callPackagingAPI(story) {
+  const providerEl = $("ai-provider");
+  const provider = providerEl ? providerEl.value : "gemini";
 
-    const el = document.getElementById("debug-json");
-    if (el) el.textContent = JSON.stringify(json, null, 2);
+  const payload = {
+    story: story,
+    provider: provider,
+  };
+
+  showResult("IA pensando...\n");
+
+  const response = await fetch("/api/packaging", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+  let text = data.raw_text || JSON.stringify(data, null, 2);
+  return text;
 }
 
+async function executarEtapa(stage) {
+  uiToState(stage);
+  state.etapaAtual = stage;
 
+  if (stage === "lapidar") {
+    const entrada = state.entradaPorEtapa.lapidar || "";
+    const out = analyzeStoryLocal(entrada);
+    state.textosPorEtapa.lapidar = out || "";
+    stateToUI("lapidar");
+    return;
+  }
 
-// -----------------------------
-// RENDERIZAÇÃO
-// -----------------------------
+  if (stage === "embalar") {
+    const baseText =
+      state.textosPorEtapa.lapidar ||
+      state.entradaPorEtapa.embalar;
 
-function renderTitles(titles) {
-
-    console.log("Renderizando títulos...");
-
-    const container = document.getElementById("tab-titles");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    titles.forEach(t => {
-
-        const item = document.createElement("div");
-        item.className = "result-item";
-        item.textContent = t;
-
-        container.appendChild(item);
-    });
-}
-
-
-
-function renderThumbnails(thumbnails) {
-
-    console.log("Renderizando miniaturas...");
-
-    const container = document.getElementById("tab-thumbnails");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    thumbnails.forEach(t => {
-
-        const item = document.createElement("div");
-        item.className = "result-item";
-        item.textContent = t;
-
-        container.appendChild(item);
-    });
-}
-
-
-
-function renderThumbTexts(texts) {
-
-    console.log("Renderizando textos de thumbnails...");
-
-    const container = document.getElementById("tab-thumbtexts");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    texts.forEach(t => {
-
-        const item = document.createElement("div");
-        item.className = "result-item";
-        item.textContent = t;
-
-        container.appendChild(item);
-    });
-}
-
-
-
-function renderCombos(combos) {
-
-    console.log("Renderizando combos...");
-
-    const container = document.getElementById("tab-combos");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    combos.forEach(c => {
-
-        const item = document.createElement("div");
-        item.className = "result-item";
-        item.textContent = c;
-
-        container.appendChild(item);
-    });
-}
-
-
-
-function renderAnalysis(text) {
-
-    console.log("Renderizando análise...");
-
-    const container = document.getElementById("tab-analysis");
-
-    if (!container) return;
-
-    container.innerHTML = text;
-}
-
-
-
-// -----------------------------
-// FALLBACK LOCAL
-// -----------------------------
-
-function fallbackLocal() {
-
-    console.warn("Usando fallback local");
-
-    const titles = [
-        "O Preço Invisível do Amor",
-        "Ela Esperou 10 Anos",
-        "O Amor Que o Dinheiro Não Comprou"
-    ];
-
-    const thumbnails = [
-        "Um homem rico olhando para trás",
-        "Uma mulher esperando na estação",
-        "Um anel esquecido sobre a mesa"
-    ];
-
-    const texts = [
-        "10 anos esperando",
-        "Ele voltou tarde demais",
-        "O amor não tem preço"
-    ];
-
-    const combos = [
-        "Ela Esperou 10 Anos + Mulher na estação",
-        "O Amor Não Comprado + Anel esquecido"
-    ];
-
-    const analysis = "Fallback local utilizado. A IA não retornou estrutura válida.";
-
-    renderTitles(titles);
-    renderThumbnails(thumbnails);
-    renderThumbTexts(texts);
-    renderCombos(combos);
-    renderAnalysis(analysis);
-}
-
-
-
-// -----------------------------
-// GERAÇÃO COM IA
-// -----------------------------
-
-async function generatePackageWithAI() {
+    if (!baseText || !baseText.trim()) {
+      alert("Sem texto para embalar. Use o Lapidar ou preencha a entrada do Embalar.");
+      return;
+    }
 
     try {
-
-        const story = document.getElementById("story-full").value;
-
-        if (!story) {
-            alert("Insira a história primeiro.");
-            return;
-        }
-
-        const provider = document.getElementById("ai-provider").value;
-
-        const payload = {
-            story: story,
-            provider: provider
-        };
-
-        const prompt = JSON.stringify(payload, null, 2);
-
-        debugPrompt(prompt);
-
-        console.log("Chamando API:", "/api/generate-package");
-
-        const response = await fetch("/api/packaging", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        console.log("Resposta da IA:", data);
-
-        debugResponse(data);
-
-        let rawText = data?.raw_text || data?.text || data?.response || "";
-
-        let parsed = safeParseJson(rawText);
-
-        // suporte Gemini
-        if (parsed?.embalagem_narrativa) {
-            parsed = parsed.embalagem_narrativa;
-        }
-
-        debugJson(parsed);
-
-        if (!parsed) {
-            fallbackLocal();
-            return;
-        }
-
-        const titles =
-            parsed.titles ||
-            parsed.titulos ||
-            [];
-
-        const thumbnails =
-            parsed.thumbnails ||
-            parsed.miniaturas ||
-            [];
-
-        const texts =
-            parsed.thumb_texts ||
-            parsed.textos_thumbnail ||
-            [];
-
-        const combos =
-            parsed.combos ||
-            parsed.combinacoes ||
-            [];
-
-        const analysis =
-            parsed.analysis ||
-            parsed.analise ||
-            "Análise não fornecida.";
-
-        if (!titles.length) {
-            fallbackLocal();
-            return;
-        }
-
-        renderTitles(titles);
-        renderThumbnails(thumbnails);
-        renderThumbTexts(texts);
-        renderCombos(combos);
-        renderAnalysis(analysis);
-
+      const out = await callPackagingAPI(baseText);
+      state.textosPorEtapa.embalar = out || "";
+      stateToUI("embalar");
     } catch (err) {
-
-        console.error("ERRO DA API:", err);
-
-        fallbackLocal();
+      console.error(err);
+      showResult("Erro na API:\n\n" + err);
     }
+    return;
+  }
+
+  if (stage === "refinar") {
+    const entrada = state.entradaPorEtapa.refinar || state.textosPorEtapa.embalar;
+    if (!entrada || !entrada.trim()) {
+      alert("Sem conteúdo para refinar. Envie algo a partir do Embalar.");
+      return;
+    }
+    // Refinamento local simples: apenas copia a entrada, mantendo espaço para curadoria manual.
+    state.entradaPorEtapa.refinar = entrada;
+    state.textosPorEtapa.refinar = entrada;
+    stateToUI("refinar");
+    return;
+  }
 }
 
+function enviarParaProxima(stage) {
+  uiToState(stage);
+  const idx = ETAPAS_UI.indexOf(stage);
+  if (idx < 0 || idx === ETAPAS_UI.length - 1) return;
 
+  const next = ETAPAS_UI[idx + 1];
 
-// -----------------------------
-// BOTÕES
-// -----------------------------
+  if (stage === "lapidar") {
+    state.entradaPorEtapa[next] = state.textosPorEtapa.lapidar || state.entradaPorEtapa.lapidar || "";
+  } else if (stage === "embalar") {
+    state.entradaPorEtapa[next] = state.textosPorEtapa.embalar || "";
+  }
+
+  stateToUI(next);
+}
+
+async function listarProjetos() {
+  const res = await fetch("/api/projetos");
+  const data = await res.json();
+  const select = document.getElementById("listaProjetos");
+  select.innerHTML = "";
+  data.projetos.forEach(nome => {
+    const option = document.createElement("option");
+    option.value = nome;
+    option.textContent = nome;
+    select.appendChild(option);
+  });
+}
+
+async function carregarProjeto() {
+  const nome = document.getElementById("listaProjetos").value;
+  const res = await fetch(`/api/projetos/${nome}`);
+  const data = await res.json();
+  document.getElementById("textoLapidar").value = data.texto || "";
+  document.getElementById("resultadoLapidar").value = data.resultado || "";
+  document.getElementById("narration-ref").value = data.referencia || "";
+  document.getElementById("roteiroDiretor").value = data.roteiro || "";
+  document.getElementById("outputDiretor").value = data.output || "";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    const btnGenerate = document.getElementById("btn-generate-package");
-
-    if (btnGenerate) {
-
-        btnGenerate.addEventListener("click", async () => {
-
-            await generatePackageWithAI();
-
-        });
-
-    }
-
+  listarProjetos();
+  if (window.initCreativeDirection) {
+    window.initCreativeDirection();
+  }
 });

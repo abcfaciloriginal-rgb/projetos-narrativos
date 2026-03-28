@@ -1,289 +1,318 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Atelier de Embalagem Narrativa</title>
-<link rel="stylesheet" href="css/style.css">
+
+<style>
+  :root {
+    --bg:#0b0f14;
+    --panel:#0f1620;
+    --panel2:#0b1220;
+    --border:#1f2a37;
+    --text:#e6edf3;
+    --muted:#bfb6d9;
+    --accent:#b57aff;
+    --btn:#1f6feb;
+    --btn2:#223043;
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    margin:0;
+    padding:18px;
+  }
+  .wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .topbar{
+    position:relative;
+    background:linear-gradient(180deg, rgba(11,15,20,.98), rgba(11,15,20,.92));
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px;
+    backdrop-filter: blur(6px);
+  }
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  h1{margin:0;font-size:28px;color:var(--accent);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  label{font-size:12px;color:var(--muted);}
+  select,input{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:6px 10px;
+    outline:none;
+  }
+  .hint{color:var(--muted);font-size:12px;margin-top:6px;}
+  .pipeline{display:flex;flex-direction:column;gap:12px;}
+  .stage{
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:var(--panel);
+    padding:14px;
+  }
+  .stage h2{margin:0 0 10px 0;font-size:20px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:980px){.cols{grid-template-columns:1fr;}}
+  textarea{
+    width:100%;
+    min-height:190px;
+    resize:vertical;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:12px;
+    padding:10px;
+    outline:none;
+    line-height:1.35;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  }
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  button{
+    background:var(--btn);
+    border:0;
+    color:#fff;
+    padding:9px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.secondary{background:var(--btn2);}
+  button.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+  .badge{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font-size:12px;}
+  .grid4{display:grid;grid-template-columns:repeat(4,minmax(200px,1fr));gap:10px;}
+  @media(max-width:980px){.grid4{grid-template-columns:1fr;}}
+
+  .narration-ref{
+    margin-bottom:12px;
+  }
+
+  .narration-ref textarea{
+    width:100%;
+    min-height:120px;
+  }
+
+  .tooltip {
+    position: relative;
+    cursor: help;
+  }
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    width: 260px;
+    background-color: #fff8c5;
+    color: #333;
+    text-align: left;
+    border-radius: 8px;
+    padding: 10px;
+    position: absolute;
+    z-index: 10;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+  }
+
+</style>
+
 </head>
 
 <body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <h1>Atelier de Embalagem Narrativa</h1>
+      <span class="badge">Backend FastAPI • UI Unificada</span>
+    </div>
 
-<header id="atelier-header">
-<div class="brand-area">
-<h1>Atelier de Embalagem Narrativa</h1>
-<p>Design de Impacto</p>
+    <div class="row" style="margin-top:10px;">
+      <label>Modelo de IA</label>
+      <select id="ai-provider">
+        <option value="gemini">Gemini</option>
+        <option value="openai">OpenAI</option>
+      </select>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <select id="listaProjetos"></select>
+      <button onclick="carregarProjeto()">Carregar Projeto</button>
+    </div>
+
+    <div class="hint">
+      Aqui o navegador fala com o seu backend em <code>/api</code>. As chaves ficam no servidor (arquivo <code>.env</code> do backend).
+    </div>
+  </div>
+
+  <div class="pipeline">
+    <div class="stage" id="stage_lapidar">
+      <h2>Lapidar História</h2>
+      <div class="narration-ref">
+        <label>REFERÊNCIA DE NARRAÇÃO (estilo de contar a história)</label>
+        <textarea id="narration-ref"
+          placeholder="Cole aqui um trecho de narrativa que represente a forma de contar história desejada...">
+        </textarea>
+      </div>
+      <div class="cols">
+        <div>
+          <label>Entrada (história bruta)</label>
+          <textarea id="in_lapidar" placeholder="Cole aqui a história completa ou ideia inicial"></textarea>
+        </div>
+        <div>
+          <label>Resultado (versão lapidada)</label>
+          <textarea id="out_lapidar" placeholder="Saída do Lapidar (texto editado)"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="secondary" onclick="executarEtapa('lapidar')">Executar Lapidar (local)</button>
+        <button class="ghost" onclick="enviarParaProxima('lapidar')">Enviar → Embalar</button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_embalar">
+      <h2>Embalar para YouTube</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada (história já lapidada)</label>
+          <textarea id="in_embalar" placeholder="Vem do Lapidar (texto editado)"></textarea>
+
+          <div class="grid4" style="margin-top:10px;">
+            <div>
+              <label class="tooltip">
+                Tempo da História ⓘ
+                <span class="tooltip-text">
+                  CURTO: começa direto no conflito, impacto rápido, final forte.<br><br>
+                  MÉDIO: introdução leve, desenvolvimento com tensão, clímax e resolução.<br><br>
+                  LONGO: múltiplos arcos, loops narrativos e ganchos internos.
+                </span>
+              </label><br/>
+              <select id="tempoHistoria">
+                <option value="curto">Curto</option>
+                <option value="medio" selected>Médio</option>
+                <option value="longo">Longo</option>
+              </select>
+            </div>
+            <div>
+              <label class="tooltip">
+                Estrutura Narrativa ⓘ
+                <span class="tooltip-text">
+                  A estrutura pode se adaptar ao tempo escolhido.<br><br>
+                  Histórias curtas pedem impacto imediato.<br>
+                  Histórias médias equilibram jornada e tensão.<br>
+                  Histórias longas permitem múltiplos arcos e aprofundamento.<br><br>
+                  Use como guia, não como regra.
+                </span>
+              </label><br/>
+              <select id="estruturaNarrativa">
+                <option value="classica">Clássica (3 atos)</option>
+                <option value="impacto" selected>Impacto imediato</option>
+                <option value="multiplos">Múltiplos arcos</option>
+              </select>
+            </div>
+            <div>
+              <label>Criador</label><br/>
+              <select id="creatorSelect"></select>
+            </div>
+            <div>
+              <label>Nicho</label><br/>
+              <select id="nicheSelect"></select>
+            </div>
+            <div>
+              <label class="tooltip">
+                Estilo ⓘ
+                <span class="tooltip-text">
+                  Define a forma de contar.<br><br>
+                  Pode ser cinematográfico, filosófico, popular, dramático ou direto.<br><br>
+                  Misturar estilos pode gerar originalidade.
+                </span>
+              </label><br/>
+              <select id="estilo">
+                <option value="cinematografico">Cinematográfico</option>
+                <option value="filosofico">Filosófico</option>
+                <option value="popular">Popular</option>
+                <option value="dramatico">Dramático</option>
+                <option value="direto">Direto</option>
+              </select>
+            </div>
+            <div>
+              <label>Linguagem visual</label><br/>
+              <select id="visualSelect"></select>
+            </div>
+            <div>
+              <label>Símbolos</label><br/>
+              <select id="symbolSelect"></select>
+            </div>
+            <div>
+              <label class="tooltip">
+                Intensidade ⓘ
+                <span class="tooltip-text">
+                  Controla o nível emocional da narrativa.<br><br>
+                  Baixa → suave e reflexiva<br>
+                  Média → envolvente<br>
+                  Alta → impacto forte e dramático
+                </span>
+              </label><br/>
+              <select id="intensidade">
+                <option value="baixa">Baixa</option>
+                <option value="media" selected>Média</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Resultado (embalagem gerada pela IA)</label>
+          <!-- Mantemos o id `result-box` para reusar showResult() -->
+          <textarea id="result-box" placeholder="Aguardando geração..."></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('embalar')">Gerar Embalagem (chama /api/packaging)</button>
+        <button class="ghost" onclick="enviarParaProxima('embalar')">Enviar → Refinar</button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_refinar">
+      <h2>Refinar Títulos & Thumbnails</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada (embalagem gerada)</label>
+          <textarea id="in_refinar" placeholder="Vem do Embalar (JSON ou texto da IA)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (versão curada)</label>
+          <textarea id="out_refinar" placeholder="Use esta área para refinar manualmente ou com prompts locais."></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="secondary" onclick="executarEtapa('refinar')">Aplicar refinamento local</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="session-area">
-<input type="text" id="session-name" placeholder="Nome da Sessão">
-<input type="text" id="session-status" placeholder="Status: Aguardando" readonly>
-</div>
-
-<div class="action-area">
-<button type="button" id="btn-export-session">Exportar Sessão</button>
-</div>
-</header>
-
-
-<div id="workflow-bar">
-<div class="workflow-step active">1. Roteiro</div>
-<div class="workflow-step">2. Análise</div>
-<div class="workflow-step">3. Geração</div>
-<div class="workflow-step">4. Refino</div>
-</div>
-
-
-<div class="atelier-layout">
-
-<!-- PAINEL ESQUERDO -->
-<aside class="left-panel">
-
-<h2 class="panel-title">História Base</h2>
-
-<div class="panel-section">
-
-<div class="field-group">
-<label for="story-title">Título Provisório</label>
-<input type="text" id="story-title" placeholder="Insira o título...">
-</div>
-
-<div class="field-group">
-<label for="story-full">História Completa / Roteiro</label>
-<textarea id="story-full" rows="15" placeholder="Cole o texto aqui..."></textarea>
-</div>
-
-<div class="field-group">
-<button type="button" id="btn-analyze-story">Analisar História</button>
-</div>
-
-</div>
-
-
-<div class="panel-section">
-
-<h3>Metadados Extraídos</h3>
-
-<div class="field-group">
-<label>Logline</label>
-<input type="text" id="story-logline">
-</div>
-
-<div class="field-group">
-<label>Resumo</label>
-<textarea id="story-summary" rows="3"></textarea>
-</div>
-
-<div class="field-group">
-<label>Tema Central</label>
-<input type="text" id="theme-central">
-</div>
-
-<div class="field-group">
-<label>Emoção Dominante</label>
-<input type="text" id="emotion-dominant">
-</div>
-
-<div class="field-group">
-<label>Ferida Central</label>
-<input type="text" id="core-wound">
-</div>
-
-<div class="field-group">
-<label>Contradição Humana</label>
-<input type="text" id="human-contradiction">
-</div>
-
-<div class="field-group">
-<label>Símbolo Principal</label>
-<input type="text" id="symbol-main">
-</div>
-
-<div class="field-group">
-<label>Subtexto</label>
-<input type="text" id="subtext-central">
-</div>
-
-</div>
-
-</aside>
-
-
-<!-- PAINEL CENTRAL -->
-
-<main class="center-panel">
-
-<h2 class="panel-title">Direção</h2>
-
-<div class="panel-section">
-
-<h3>Parâmetros Criativos</h3>
-
-<div class="field-group">
-
-<div class="field-group">
-<label for="ai-provider">Modelo de IA</label>
-
-<select id="ai-provider">
-<option value="gemini">Gemini (baixo custo)</option>
-<option value="openai">OpenAI</option>
-<option value="claude">Claude</option>
-</select>
-</div>
-
-    <label for="video-niche">Nicho do vídeo</label>
-
-<select id="video-niche">
-<option value="">Selecionar</option>
-<option value="filosofia">Filosofia</option>
-<option value="romance">Romance</option>
-<option value="educacao">Educação</option>
-<option value="misterios">Mistérios</option>
-</select>
-
-</div>
-
-
-<div class="field-group">
-
-<label for="creative-reference">Referência Criativa</label>
-
-<select id="creative-reference">
-<option value="">Selecionar</option>
-<option value="prince-ea">Prince Ea</option>
-<option value="mrbeast">MrBeast</option>
-<option value="romance-brasil">Romance Brasil</option>
-</select>
-
-</div>
-
-
-<div class="field-group">
-
-<label for="visual-language">Linguagem Visual</label>
-
-<select id="visual-language">
-<option value="">Selecionar</option>
-<option value="netflix-doc">Netflix Doc</option>
-</select>
-
-</div>
-
-
-<div class="field-group">
-
-<label for="symbol-theme">Família Simbólica</label>
-
-<select id="symbol-theme">
-
-<option value="">Selecionar</option>
-<option value="solidão">Solidão</option>
-<option value="tempo">Tempo</option>
-<option value="mentira">Mentira</option>
-<option value="esperança">Esperança</option>
-<option value="prisao-mental">Prisão Mental</option>
-<option value="perda">Perda</option>
-<option value="orgulho">Orgulho</option>
-<option value="redencao">Redenção</option>
-
-</select>
-
-</div>
-
-
-<div class="field-group">
-
-<label>Intensidade Dramática</label>
-
-<input type="range"
-id="dramatic-intensity"
-min="1"
-max="10"
-value="5">
-
-</div>
-
-
-<div class="field-group">
-
-<button type="button" id="btn-generate-package">
-Gerar Embalagem
-</button>
-
-</div>
-
-</div>
-
-
-<div class="director-choices">
-
-<h3>Direção de Arte</h3>
-
-<div id="tab-final-direction">
-<p class="waiting-message">Aguardando análise...</p>
-</div>
-
-</div>
-
-</main>
-
-
-
-<!-- PAINEL DIREITO -->
-
-<aside class="right-panel">
-
-<h2 class="panel-title">Resultados</h2>
-
-<div class="results-tabs">
-
-<button class="tab-button active" data-tab="core">Núcleo</button>
-
-<button class="tab-button" data-tab="titles">Títulos</button>
-
-<button class="tab-button" data-tab="thumbnails">Thumbnails</button>
-
-<button class="tab-button" data-tab="thumbtexts">Textos</button>
-
-<button class="tab-button" data-tab="combos">Combos</button>
-
-<button class="tab-button" data-tab="analysis">Análise</button>
-
-<button class="tab-button" data-tab="debug">Debug IA</button>
-</div>
-
-
-<div id="tab-core" class="tab-panel active"></div>
-<div id="tab-titles" class="tab-panel"></div>
-<div id="tab-thumbnails" class="tab-panel"></div>
-<div id="tab-thumbtexts" class="tab-panel"></div>
-<div id="tab-combos" class="tab-panel"></div>
-<div id="tab-analysis" class="tab-panel"></div>
-<div id="tab-debug-ia" class="tab-panel">
-
-<h3>Prompt enviado</h3>
-<pre id="debug-prompt" class="debug-box"></pre>
-
-<h3>Resposta bruta da IA</h3>
-<pre id="debug-response" class="debug-box"></pre>
-
-<h3>JSON interpretado</h3>
-<pre id="debug-json" class="debug-box"></pre>
-
-</div>
-
-<div class="panel-section refine-section">
-<button type="button" id="btn-refine-selected">
-Refinar Selecionados
-</button>
-</div>
-
-</aside>
-
-</div>
-
-
-<script type="module" src="js/app.js"></script>
+<!-- 🔥 ORDEM IMPORTA: Primeiro o loader, depois o app -->
+<script src="/js/library_loader.js"></script>
+<script src="/js/app.js"></script>
+
+<script>
+    // 🔥 GARANTE QUE RODA DEPOIS DO LOAD
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.initCreativeDirection) {
+            window.initCreativeDirection();
+        } else {
+            console.error("initCreativeDirection não encontrado");
+        }
+    });
+</script>
 
 </body>
 </html>

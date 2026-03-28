@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import Literal, Any, Optional
@@ -43,6 +44,26 @@ app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
 app.mount("/library", StaticFiles(directory=FRONTEND_DIR / "library"), name="library")
 
 LIBRARY_DIR = FRONTEND_DIR / "library"
+SAVE_DIR = BASE_DIR / "projetos"
+
+
+@app.get("/api/projetos")
+def listar_projetos():
+    arquivos = []
+    if SAVE_DIR.exists():
+        for file in SAVE_DIR.glob("*.json"):
+            arquivos.append(file.stem)
+    return {"projetos": arquivos}
+
+
+@app.get("/api/projetos/{nome}")
+def carregar_projeto(nome: str):
+    file_path = SAVE_DIR / f"{nome}.json"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Projeto não encontrado")
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
 
 
 @app.get("/api/library")
@@ -85,6 +106,7 @@ class PackagingRequest(BaseModel):
     symbol: Optional[str] = None
     subtext: Optional[str] = None
     referenceContext: Optional[dict[str, Any]] = None
+    referencia: Optional[str] = None
 
 
 SYSTEM_PROMPT = """
@@ -148,6 +170,9 @@ Tom desejado:
 
 Contexto de referência:
 {payload.referenceContext or "nenhum"}
+
+Referência:
+{payload.referencia or ""}
 
 Tarefa:
 gere a embalagem completa em JSON.

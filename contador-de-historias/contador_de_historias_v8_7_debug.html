@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>contador_de_historias_v8_4_3_estavel</title>
+
+<style>
+  :root {
+    --bg:#0b0f14;
+    --panel:#0f1620;
+    --panel2:#0b1220;
+    --border:#1f2a37;
+    --text:#e6edf3;
+    --muted:#bfb6d9;
+    --accent:#b57aff;
+    --btn:#1f6feb;
+    --btn2:#223043;
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    margin:0;
+    padding:18px;
+  }
+  .wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .topbar{
+    position:relative;
+    background:linear-gradient(180deg, rgba(11,15,20,.98), rgba(11,15,20,.92));
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px;
+    backdrop-filter: blur(6px);
+  }
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  h1{margin:0;font-size:28px;color:var(--accent);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  label{font-size:12px;color:var(--muted);}
+  select,input{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:6px 10px;
+    outline:none;
+  }
+  input[type="number"]{width:74px;}
+  input[type="password"], input[type="text"]{min-width:220px;}
+  .hint{color:var(--muted);font-size:12px;margin-top:6px;}
+  .chef{
+    margin-top:12px;
+    padding:12px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:rgba(15,22,32,.75);
+    overflow: visible;
+  }
+  .chef h3{margin:0 0 10px 0;font-size:18px;}
+  .grid2{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:10px;overflow: visible;}
+  @media(max-width:980px){.grid2{grid-template-columns:1fr;}}
+  .pipeline{display:flex;flex-direction:column;gap:12px;}
+  .stage{
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:var(--panel);
+    padding:14px;
+  }
+  .stage h2{margin:0 0 10px 0;font-size:20px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:980px){.cols{grid-template-columns:1fr;}}
+  /* PROBLEMA 1: alinhar topo das duas caixas no "Lapidar" */
+  #stage_lapidar .cols > div{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+  }
+  textarea{
+    width:100%;
+    min-height:190px;
+    resize:vertical;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:12px;
+    padding:10px;
+    outline:none;
+    line-height:1.35;
+  }
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  button{
+    background:var(--btn);
+    border:0;
+    color:#fff;
+    padding:9px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.secondary{background:var(--btn2);}
+  button.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+  .metricas{
+    margin-top:10px;
+    background:rgba(26,20,40,.6);
+    padding:10px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    font-size:13px;
+  }
+  .badge{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font-size:12px;}
+
+  /* Modal de diagnóstico de erro */
+  #errModal{
+    display:none; position:fixed; inset:0; z-index:9999;
+    background:rgba(0,0,0,.7); align-items:center; justify-content:center;
+  }
+  #errModal.open{ display:flex; }
+  #errBox{
+    background:#0f1620; border:1px solid #b57aff; border-radius:18px;
+    padding:24px; max-width:680px; width:94%; max-height:80vh;
+    overflow-y:auto; color:#e6edf3; font-family:system-ui,sans-serif;
+  }
+  #errBox h2{ margin:0 0 14px; color:#ff7b7b; font-size:18px; }
+  .errRow{ margin:6px 0; font-size:13px; }
+  .errRow b{ color:#b57aff; }
+  #errRaw{
+    margin-top:12px; background:#060a10; border:1px solid #1f2a37;
+    border-radius:10px; padding:10px; font-size:12px; white-space:pre-wrap;
+    word-break:break-all; max-height:260px; overflow-y:auto; color:#bfb6d9;
+  }
+  #errClose{
+    margin-top:16px; background:#1f6feb; border:0; color:#fff;
+    padding:9px 24px; border-radius:12px; cursor:pointer; font-weight:600;
+  }
+
+.narration-ref{
+margin-bottom:12px;
+}
+
+.narration-ref textarea{
+width:100%;
+min-height:120px;
+}
+
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-text {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+
+  background: rgba(13, 28, 49, 0.85); /* melhor para blur */
+  color: #ffffff;
+
+  border: 1px solid #3a4a60;
+  border-radius: 12px;
+  padding: 12px;
+
+  width: 240px;
+  font-size: 13px;
+  line-height: 1.5;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+
+  backdrop-filter: blur(8px);
+
+  transition: all 0.25s ease;
+  z-index: 9999;
+}
+
+.tooltip:hover .tooltip-text {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+button.loading {
+  background: #444 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+button.loading::after {
+  content: " ⏳";
+}
+button.done {
+  background: #1f8f4f;
+}
+button {
+  position: relative;
+  overflow: hidden;
+}
+/* camada de progresso */
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #1f6feb, #3b82f6);
+  opacity: 0.35;
+  transition: width 0.2s linear;
+  z-index: 0;
+}
+/* texto sempre acima */
+button span {
+  position: relative;
+  z-index: 1;
+}
+/* estado carregando */
+button.loading::before {
+  width: 100%;
+  transition: width 2.5s linear;
+}
+.btn-success {
+  background: linear-gradient(90deg, #0f766e, #14b8a6); /* mais elegante */
+  color: white;
+  border: none;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!--
+    ============================================================
+    TOPO FIXO
+    - Configuração do motor
+    - API key
+    - Base URL para endpoints compatíveis com OpenAI
+    - Modo Chef
+    ============================================================
+  -->
+  <div class="topbar">
+    <div class="brand">
+      <h1>🎬 Contador de Histórias V8.4</h1>
+      <span class="badge">Motor V8.4 • UI Unificada • Llama Ready</span>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <label>Provider</label>
+      <select id="provider">
+        <option value="openai">OpenAI</option>
+        <option value="gemini" selected>Gemini</option>
+        <option value="openrouter">OpenRouter</option>
+        <option value="claude">Claude</option>
+      </select>
+
+      <label>Modelo</label>
+      <select id="model">
+        <!-- opções preenchidas dinamicamente via JS -->
+      </select>
+
+      <label>Temperatura</label>
+      <input id="temperatura" type="number" step="0.1" min="0" max="2" value="0.7"/>
+
+      <label>API Key</label>
+      <input id="apiKey" type="password" placeholder="não salvamos no disco"/>
+
+      <label>Base URL</label>
+      <input id="baseUrl" type="text" placeholder="https://integrate.api.nvidia.com/v1/chat/completions"/>
+
+      <label>Título do Projeto</label>
+      <input id="tituloProjeto" type="text" placeholder="A Cigarra e a Formiga"/>
+    </div>
+
+    <div class="hint">Dica: para Llama/NVIDIA/OpenRouter, escolha o motor OpenAI-Compatible, cole sua API e informe a Base URL do provedor.</div>
+
+    <div class="btnrow" style="margin-top:10px;">
+  <button id="salvarProjetoCompleto" class="secondary"><span>💾 Salvar Projeto Completo</span></button>
+  <button id="autoFillBtn" class="ghost" onclick="autoFillFields(defaultData)"><span>Preencher automático</span></button>
+    </div>
+
+    <div class="chef">
+      <h3>👨🏾‍🍳 Modo Chef</h3>
+      <div class="grid2">
+
+        <div>
+          <label><span data-tooltip="Define vocabulário, clareza e maturidade emocional da narrativa.">Público-Alvo (Vocabulário)</span></label><br/>
+          <select id="publico">
+            <option value="infantil">Infantil (6-9)</option>
+            <option value="juvenil">Juvenil (10-14)</option>
+            <option value="adulto" selected>Adulto Geral</option>
+            <option value="literario">Literário/Filosófico</option>
+          </select>
+        </div>
+
+        <div>
+          <label><span data-tooltip="Define o estilo narrativo: cinematográfico, direto, literário ou minimalista.">Estilo de Linguagem</span></label><br/>
+          <select id="estiloLing">
+            <option value="conversacional">Conversacional</option>
+            <option value="cinematografico" selected>Cinematográfico</option>
+            <option value="literario">Literário</option>
+            <option value="minimalista">Minimalista</option>
+          </select>
+        </div>
+
+        <div>
+          <label><span data-tooltip="Quem conta a história muda completamente a percepção emocional.">Ponto de Vista</span></label><br/>
+            <select id="pontoVista">
+            <option value="narrador" selected>Narrador</option>
+            <option value="protagonista">Protagonista</option>
+            <option value="antagonista">Antagonista</option>
+            <option value="testemunha">Testemunha</option>
+            <option value="coletivo">Coletivo</option>
+            <option value="primeira_pessoa">Primeira Pessoa</option>
+            <option value="terceira_pessoa">Terceira Pessoa</option>
+          </select>
+        </div>
+
+        <div>
+          <label><span data-tooltip="Organiza o fluxo da história: ritmo, viradas e construção dramática.">Estrutura Narrativa</span></label><br/>
+          <select id="estruturaNarrativa">
+            <option value="3_atos" selected>3 Atos</option>
+            <option value="jornada">Jornada do Herói</option>
+            <option value="curto">Curto (Hook → Virada → Final)</option>
+            <option value="prince_ea">Hook → Conflict → Pivot → Resolve (Prince EA)</option>
+          </select>
+        </div>
+
+        <div>
+          <label><span data-tooltip="Forças simbólicas universais que tornam a história mais poderosa.">Arquétipos</span></label><br/>
+          <input id="arquetipos" type="number" min="0" max="5" step="1" value="0"/>
+        </div>
+
+        <div>
+          <label><span data-tooltip="Define o nível de conflito e tensão narrativa.">Intensidade Dramática</span></label><br/>
+          <input id="drama" type="number" min="0" max="5" step="1" value="0"/>
+        </div>
+
+        <div>
+          <label><span data-tooltip="O que conecta a história com qualquer ser humano.">Valor Universal</span></label><br/>
+          <input id="valor" type="number" min="0" max="5" step="1" value="0"/>
+        </div>
+        <div>
+<label><span data-tooltip="Controla o quanto a história cria perguntas e prende atenção.">Curiosidade Narrativa</span></label><br/>
+<select id="curiosidade">
+<option value="baixa">Baixa</option>
+<option value="media" selected>Média</option>
+<option value="alta">Alta</option>
+<option value="extrema">Extrema (MrBeast)</option>
+</select>
+</div>
+
+<div>
+<label><span data-tooltip="Gera tensão através de informação escondida ou antecipada.">Suspense (Hitchcock)</span></label><br/>
+<select id="suspense">
+<option value="nenhum">Nenhum</option>
+<option value="baixo">Baixo</option>
+<option value="medio" selected>Médio</option>
+<option value="alto">Alto</option>
+<option value="hitchcock">Hitchcock</option>
+</select>
+</div>
+
+<div>
+<label><span data-tooltip="Abre perguntas na narrativa e fecha depois para manter retenção.">Story Loops</span></label><br/>
+<select id="loops">
+<option value="nenhum">Nenhum</option>
+<option value="alguns" selected>Alguns</option>
+<option value="muitos">Muitos</option>
+</select>
+</div>
+
+<div>
+<label><span data-tooltip="Controla o impacto emocional da história.">Intensidade Emocional</span></label><br/>
+<select id="emocao">
+<option value="baixa">Baixa</option>
+<option value="media" selected>Média</option>
+<option value="alta">Alta</option>
+<option value="cinematografica">Cinematográfica</option>
+</select>
+</div>
+
+<div>
+<label><span data-tooltip="Camada filosófica e simbólica da narrativa.">Profundidade de Significado</span></label><br/>
+<select id="meaning">
+<option value="leve">Leve</option>
+<option value="media" selected>Média</option>
+<option value="profunda">Profunda</option>
+</select>
+</div>
+
+<div>
+<label><span data-tooltip="Define o ritmo geral e duração da experiência narrativa.">Tempo da História</span></label><br/>
+<select id="tempo">
+<option value="curto">Curto (até 1 min)</option>
+<option value="medio" selected>Médio (8–20 min)</option>
+<option value="longo">Longo (30–180 min)</option>
+</select>
+</div>
+
+      </div>
+      <div class="hint">
+        Nota: profundidade filosófica não é vocabulário rebuscado. O Chef aplica limitador anti-barroco quando necessário.
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline">
+
+    <div class="stage" id="stage_lapidar">
+      <h2>Lapidar</h2>
+      <div class="narration-ref">
+  <label>REFERÊNCIA DE NARRAÇÃO</label>
+  <textarea id="narration-ref"
+    placeholder="Cole aqui um exemplo de estilo narrativo...">
+  </textarea>
+</div>
+      <div class="cols">
+        <div>
+          <label>Entrada</label>
+          <textarea id="in_lapidar" placeholder="Cole aqui o texto bruto (ou ideia)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (editável — fonte da verdade)</label>
+          <textarea id="out_lapidar" placeholder="Saída do Lapidar"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('lapidar')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('lapidar')"><span>Salvar Lapidar .md</span></button>
+        <button class="ghost" onclick="enviarParaProxima('lapidar')"><span>Enviar → Estruturar</span></button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_estruturar">
+      <h2>Estruturar</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada</label>
+          <textarea id="in_estruturar" placeholder="Vem do Lapidar (texto editado)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (editável)</label>
+          <textarea id="out_estruturar" placeholder="Saída do Estruturar"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('estruturar')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('estruturar')"><span>Salvar Estruturar .md</span></button>
+        <button class="ghost" onclick="enviarParaProxima('estruturar')"><span>Enviar → Forjar</span></button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_forjar">
+      <h2>Forjar</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada</label>
+          <textarea id="in_forjar" placeholder="Vem do Estruturar (texto editado)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (editável)</label>
+          <textarea id="out_forjar" placeholder="Saída do Forjar"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('forjar')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('forjar')"><span>Salvar Forjar .md</span></button>
+        <button class="ghost" onclick="enviarParaProxima('forjar')"><span>Enviar → Auditar</span></button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_auditar">
+      <h2>Auditar</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada (a história)</label>
+          <textarea id="in_auditar" placeholder="Vem do Forjar (texto editado)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (auditoria narrativa avançada)</label>
+          <textarea id="out_auditar" placeholder="Saída do Auditar (avaliação + motor de curiosidade)"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('auditar')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('auditar')"><span>Salvar Auditar .md</span></button>
+        <button class="ghost" onclick="enviarParaProxima('auditar')"><span>Enviar → Audio</span></button>
+      </div>
+
+      <div class="metricas">
+        <div><strong>Legibilidade (Flesch PT)</strong></div>
+        <div id="fleschOut">Índice: — | Nível: —</div>
+        <div class="btnrow" style="margin-top:10px;">
+          <button class="secondary" onclick="analisarLegibilidade_UI()"><span>Analisar Legibilidade (usa a Entrada do Auditar)</span></button>
+        </div>
+      </div>
+      </div>
+      <div class="metricas" style="margin-top:12px">
+      <strong>📊 Scores Narrativos</strong>
+
+      <div id="scoreRetention">Retention Score: —</div>
+      <div id="scoreMeaning">Meaning Score: —</div>
+
+      </div>
+
+      <div class="metricas" style="margin-top:12px">
+      <strong>📈 Curiosity Graph</strong>
+
+      <div id="cgHook">Hook: —</div>
+      <div id="cgMiddle">Meio: —</div>
+      <div id="cgTwist">Virada: —</div>
+      <div id="cgEnding">Final: —</div>
+
+      </div>
+
+    <div class="stage" id="stage_audio">
+      <h2>Audio</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada (história)</label>
+          <textarea id="in_audio" placeholder="Vem do Auditar (história, não relatório)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (trilha de locução)</label>
+          <textarea id="out_audio" placeholder="Saída do Audio (marcações de locução)"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('audio')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('audio')"><span>Salvar Audio .md</span></button>
+        <button class="ghost" onclick="enviarParaProxima('audio')"><span>Enviar → Diretor</span></button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage_diretor">
+      <h2>Diretor</h2>
+      <div class="cols">
+        <div>
+          <label>Entrada (história)</label>
+          <textarea id="in_diretor" placeholder="Vem do Audio (história)"></textarea>
+        </div>
+        <div>
+          <label>Resultado (shotlist / direção visual)</label>
+          <textarea id="out_diretor" placeholder="Saída do Diretor (cenas, câmera, luz, som, subtexto)"></textarea>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="executarEtapa('diretor')"><span>Executar</span></button>
+        <button class="secondary" onclick="saveStageAsMD_UI('diretor')"><span>Salvar Diretor .md</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+function getNarrationReference(){
+const el = document.getElementById("narration-ref");
+return el ? el.value.trim() : "";
+}
+
+  /*
+    ============================================================
+    ESTADO CENTRAL
+    - Tudo importante vive em state
+    - Curadoria humana continua sendo a fonte da verdade
+    ============================================================
+  */
+  const ETAPAS_UI = ["lapidar","estruturar","forjar","auditar","audio","diretor"];
+
+  const state = {
+    etapaAtual: "lapidar",
+    config:{
+      provider:"gemini",
+      model:"gemini-2.5-pro",
+      temperatura:0.7,
+      baseUrl:"",
+      apiKeys:{
+        openai:"",
+        gemini:"",
+        openrouter:"",
+        claude:""
+      }
+    },
+    narration:"testemunha",
+    chef:{
+  publico:"adulto",
+  estrutura:"3_atos",
+  estilo:"cinematografico",
+  pontoVista:"narrador",
+  arquetipos:"0",
+  drama:"0",
+  valor:"0",
+  curiosidade:"media",
+  suspense:"medio",
+  loops:"alguns",
+  emocao:"media",
+  meaning:"media",
+  tempo:"medio"
+},
+    textosPorEtapa:{ lapidar:"", estruturar:"", forjar:"", auditar:"", audio:"", diretor:"" },
+    entradaPorEtapa:{ lapidar:"", estruturar:"", forjar:"", auditar:"", audio:"", diretor:"" },
+    metricas:{ flesch:null, nivel:null }
+  };
+
+  const STORAGE_KEY = 'contador_historias_v82';
+  const $ = (id)=> document.getElementById(id);
+
+  function autoFillFields(data) {
+    if (!data || typeof data !== 'object') return;
+    for (const id in data) {
+      const el = document.getElementById(id);
+      if (!el || !('value' in el)) continue;
+      const val = data[id] ?? '';
+      if (el.tagName === 'SELECT') {
+        const hasOption = [...el.options].some(o => o.value === String(val));
+        if (hasOption) el.value = val;
+      } else {
+        el.value = val;
+      }
+    }
+  }
+
+  const defaultData = {
+    tema: "Emagrecimento",
+    publico: "Adultos acima de 40",
+    estilo: "Emocional",
+    intensidade: "Média"
+  };
+
+  const MODEL_OPTIONS = {
+    openai: [
+      { value: "gpt-4o", label: "gpt-4o" },
+      { value: "gpt-4.1-mini", label: "gpt-4.1-mini" }
+    ],
+    gemini: [
+      { value: "gemini-2.5-pro", label: "gemini-2.5-pro" },
+      { value: "gemini-2.5-flash", label: "gemini-2.5-flash" }
+    ],
+    openrouter: [
+      { value: "meta-llama/llama-3.3-70b-instruct:free", label: "llama-3.3-70b (OpenRouter Free)" },
+      { value: "deepseek/deepseek-chat-v3-0324", label: "deepseek-v3.2" },
+      { value: "nvidia/nemotron-3-super-120b", label: "nemotron-3-super-120b" }
+    ],
+    claude: [
+      { value: "claude-3-opus-20240229", label: "claude-3-opus" },
+      { value: "claude-3-sonnet-20240229", label: "claude-3-sonnet" }
+    ]
+  };
+
+  function populateModelOptions(provider){
+    const select = $("model");
+    if(!select) return;
+    const opts = MODEL_OPTIONS[provider] || [];
+    const current = state.config.model;
+    select.innerHTML = "";
+    opts.forEach(o=>{
+      const opt = document.createElement("option");
+      opt.value = o.value;
+      opt.textContent = o.label;
+      select.appendChild(opt);
+    });
+    if(current && opts.some(o=>o.value === current)){
+      select.value = current;
+    }
+  }
+
+  // PROBLEMA 2: trocar provider/model em tempo real
+  function updateModels(){
+    const provider = $("provider")?.value;
+    if(!provider) return;
+    state.config.provider = provider;
+    populateModelOptions(provider);
+    if($("model")) state.config.model = $("model").value;
+
+    // Troca da chave conforme provider atual (sem reload)
+    if($("apiKey")) $("apiKey").value = (state.config.apiKeys[provider] || "");
+  }
+
+  /*
+    ============================================================
+    LEITURA DA UI
+    - Aqui corrigimos os ids reais da interface
+    - temperatura, apiKey e estruturaNarrativa agora funcionam
+    ============================================================
+  */
+  function readConfigFromUI(){
+    const providerEl = $('provider');
+    const modelEl = $('model');
+    const apiKeyEl = $('apiKey');
+
+    if(providerEl) state.config.provider = providerEl.value;
+    if(modelEl) state.config.model = modelEl.value;
+
+    state.config.temperatura = parseFloat($('temperatura').value);
+    if(apiKeyEl){
+      state.config.apiKeys[state.config.provider] = apiKeyEl.value;
+      sessionStorage.setItem('contador_apiKey_v82_'+state.config.provider, apiKeyEl.value);
+    }
+    state.config.baseUrl = $('baseUrl').value.trim();
+    state.chef.pontoVista = $('pontoVista').value;
+    if($('narration')) state.narration = $('narration').value;
+
+    state.chef.publico = $('publico').value;
+    state.chef.estrutura = $('estruturaNarrativa').value;
+    state.chef.estilo = $('estiloLing').value;
+    state.chef.arquetipos = $('arquetipos').value;
+    state.chef.drama = $('drama').value;
+    state.chef.valor = $('valor').value;
+    state.chef.curiosidade = $('curiosidade').value;
+    state.chef.suspense = $('suspense').value;
+    state.chef.loops = $('loops').value;
+    state.chef.emocao = $('emocao').value;
+    state.chef.meaning = $('meaning').value;
+    state.chef.tempo = $('tempo').value;
+
+  }
+
+  function uiToState(stage){
+    state.entradaPorEtapa[stage] = $("in_"+stage).value || "";
+    state.textosPorEtapa[stage] = $("out_"+stage).value || "";
+  }
+
+  function stateToUI(stage){
+    $("in_"+stage).value = state.entradaPorEtapa[stage] || "";
+    $("out_"+stage).value = state.textosPorEtapa[stage] || "";
+  }
+
+  function syncAllUI(){
+    if($('provider')) $('provider').value = state.config.provider || 'gemini';
+    populateModelOptions(state.config.provider || 'gemini');
+    if($('model')) $('model').value = state.config.model || (MODEL_OPTIONS[state.config.provider || 'gemini']?.[0]?.value || '');
+    $('temperatura').value = state.config.temperatura ?? 0.7;
+    // PROBLEMA 2: manter API key visível para o provider selecionado
+    if($('apiKey')) $('apiKey').value = state.config.apiKeys[state.config.provider || 'gemini'] || '';
+    $('baseUrl').value = state.config.baseUrl || '';
+    $('tituloProjeto').value = $('tituloProjeto').value || '';
+    if($('narration')) $('narration').value = state.narration || 'testemunha';
+    $('pontoVista').value = state.chef.pontoVista || 'narrador';
+    $('publico').value = state.chef.publico || 'adulto';
+    $('estruturaNarrativa').value = state.chef.estrutura || '3_atos';
+    $('estiloLing').value = state.chef.estilo || 'cinematografico';
+    $('arquetipos').value = state.chef.arquetipos || '0';
+    $('drama').value = state.chef.drama || '0';
+    $('valor').value = state.chef.valor || '0';
+    $('curiosidade').value = state.chef.curiosidade || 'media';
+    $('suspense').value = state.chef.suspense || 'medio';
+    $('loops').value = state.chef.loops || 'alguns';
+    $('emocao').value = state.chef.emocao || 'media';
+    $('meaning').value = state.chef.meaning || 'media';
+    $('tempo').value = state.chef.tempo || 'medio';
+
+    for(const st of ETAPAS_UI) stateToUI(st);
+
+    if(state.metricas?.flesch != null){
+      $('fleschOut').innerText = `Índice: ${Number(state.metricas.flesch).toFixed(2)} | Nível: ${state.metricas.nivel || '—'}`;
+    }
+    if(state.textosPorEtapa.auditar){
+  atualizarScoresNarrativos(state.textosPorEtapa.auditar);
+  atualizarCuriosityGraph(state.textosPorEtapa.auditar);
+}
+  }
+
+  /*
+    ============================================================
+    PROMPT ENGINE
+    ============================================================
+  */
+  function gerarInstrucaoLexical(publico) {
+    switch (publico) {
+      case "infantil":
+        return "Use vocabulário simples, conte a história para crianças de 4 anos a 6 anos, frases curtas e palavras concretas.";
+      case "juvenil":
+        return "Use linguagem acessível, evitando termos técnicos complexos.";
+      case "adulto":
+        return "Use linguagem clara com liberdade moderada de abstração.";
+      case "literario":
+        return "Profundidade filosófica vem de clareza e imagens concretas. Use palavras compreensíveis, evite rebuscamento, adjetivação ornamental e linguagem acadêmica. Pode soar literário, mas limpo e cinematográfico.";
+      default:
+        return "";
+    }
+  }
+
+  function gerarInstrucaoPontoVista(valor){
+  switch(valor){
+    case "narrador":
+      return "Conte a história a partir de um narrador observador, claro e envolvente.";
+    case "protagonista":
+      return "Conte a história sob o ponto de vista do protagonista, com forte proximidade emocional.";
+    case "antagonista":
+      return "Conte a história sob o ponto de vista do antagonista, revelando sua lógica interna.";
+    case "testemunha":
+      return "Conte a história como alguém que presenciou os fatos e os relata.";
+    case "coletivo":
+      return "Conte a história em voz coletiva, como um grupo que viveu ou observou os fatos.";
+    case "primeira_pessoa":
+      return "Conte a história em primeira pessoa, com intimidade e subjetividade.";
+    case "terceira_pessoa":
+      return "Conte a história em terceira pessoa, com visão ampla e fluida.";
+    default:
+      return "";
+  }
+}
+
+
+
+  function gerarInstrucaoEstilo(estilo){
+    switch(estilo){
+      case "conversacional":
+        return "Escreva como uma conversa íntima: simples, direto, humano. Evite floreios.";
+      case "cinematografico":
+        return "Escreva cinematográfico: imagens concretas, subtexto, ritmo, pausas naturais. Mostrar em vez de explicar.";
+      case "literario":
+        return "Escreva com densidade literária, porém clara: ideias profundas com palavras simples. Sem barroco.";
+      case "minimalista":
+        return "Escreva minimalista: frases curtas, poucos adjetivos, impacto por corte e silêncio.";
+      default:
+        return "";
+    }
+  }
+
+function gerarInstrucaoModoNarrativo(publico, estilo){
+  // 👶 INFANTIL
+  if(publico === "infantil"){
+    return `
+MODO INFANTIL:
+- Narrador pode ser presente e próximo
+- Linguagem simples e clara
+- Pode explicar, mas de forma leve
+- Priorizar compreensão imediata
+- Ritmo fluido e acessível
+EVITAR:
+- linguagem complexa
+- excesso de abstração
+`;
+  }
+  // 🎙️ DOCUMENTÁRIO (NOVO)
+  if(estilo === "documentario"){
+    return `
+MODO DOCUMENTÁRIO:
+- Narrador pode conduzir a história
+- Permitir contexto e explicação
+- Linguagem clara, direta e envolvente
+- Construir credibilidade e progressão
+- Pode usar estrutura linear
+EVITAR:
+- excesso de abstração poética
+- fragmentação excessiva
+- cortes que prejudiquem entendimento
+`;
+  }
+  // 🎙️ DOCUMENTÁRIO (NOVO)
+  if(estilo === "documentario"){
+    return `
+MODO DOCUMENTÁRIO:
+- Narrador pode conduzir a história
+- Permitir contexto e explicação
+- Linguagem clara, direta e envolvente
+- Construir credibilidade e progressão
+- Pode usar estrutura linear
+EVITAR:
+- excesso de abstração poética
+- fragmentação excessiva
+- cortes que prejudiquem entendimento
+`;
+  }
+  // 🎭 CINEMATOGRÁFICO (PADRÃO)
+  return `
+MODO CINEMATOGRÁFICO:
+PROIBIDO:
+- começar com "Era uma vez"
+- explicar personagem diretamente
+- resumir passado
+- explicar sentimento
+OBRIGATÓRIO:
+- começar em uma cena
+- mostrar em vez de explicar
+- usar imagem concreta
+- usar subtexto
+- permitir silêncio e lacunas
+`;
+}
+
+  function regraAntiBarroco(){
+    return "REGRA: profundidade filosófica NÃO é vocabulário rebuscado. Priorize clareza, imagens concretas e ritmo de narração. Evite metáforas ornamentais e linguagem acadêmica.";
+  }
+
+  function gerarInstrucaoEstrutura(estrutura){
+    if(estrutura === "3_atos")
+      return "Reescreva o texto abaixo como um ROTEIRO em 3 atos.\n\n" +
+             "- Identifique e rotule cada ato (ATO I, ATO II, ATO III).\n" +
+             "- Dentro de cada ato, apresente cenas numeradas (Cena 1, Cena 2, ...).\n" +
+             "- Para cada cena, inclua: breve descrição de cenário/ação e blocos de diálogo formatados como: Personagem: \"falas\".\n" +
+             "- Mantenha ritmo dramático claro, indique pontos de virada e clímax.\n";
+
+    if(estrutura === "jornada")
+      return "Reescreva o texto abaixo como um ROTEIRO organizado segundo a Jornada do Herói.\n\n" +
+             "- Marque etapas como Chamado, Recusa, Encontro com o Mentor, Provação, Apogeu, Retorno, etc.\n" +
+             "- Para cada etapa, forneça cenas curtas com descrição e diálogo.\n";
+
+    if(estrutura === "curto")
+      return "Reescreva o texto abaixo com uma estrutura curta: Hook → Virada → Final.\n\n" +
+             "- Comece com um gancho forte.\n" +
+             "- Faça uma virada clara no meio.\n" +
+             "- Termine com imagem ou frase marcante.\n";
+
+    if(estrutura === "prince_ea")
+      return `Reescreva o texto abaixo seguindo esta arquitetura narrativa:
+
+1. GANCHO PROVOCATIVO (HOOK)
+Comece com algo intrigante, paradoxal ou inesperado.
+Uma frase que capture atenção imediata.
+
+2. EXPLORAÇÃO DO PROBLEMA (CONFLICT)
+Mostre o problema humano ou social.
+Use contrastes, imagens concretas e tensão crescente.
+
+3. VIRADA (PIVOT)
+Momento de revelação ou quebra de expectativa.
+A narrativa muda de direção.
+
+4. RESOLUÇÃO POÉTICA (RESOLVE)
+Encerrar com uma imagem forte ou frase memorável.
+Evite moral explícita.
+
+Escreva cinematográfico, concreto e humano.`;
+
+    return "";
+  }
+/*
+  ============================================================
+  NOVOS MOTORES DO MODO CHEF
+  - Curiosidade
+  - Suspense
+  - Story Loops
+  - Intensidade Emocional
+  - Profundidade de Significado
+  ============================================================
+*/
+
+function gerarInstrucaoCuriosidade(nivel){
+  switch(nivel){
+    case "baixa":
+      return "Use curiosidade narrativa de forma leve. Não exagere em perguntas abertas.";
+    case "media":
+      return "Crie curiosidade moderada. Introduza pequenas lacunas de informação e mantenha interesse constante.";
+    case "alta":
+      return "Crie forte curiosidade narrativa. Abra perguntas implícitas e atrase respostas importantes.";
+    case "extrema":
+      return "Crie curiosidade extrema. Use ganchos fortes, perguntas abertas, lacunas de informação e sensação constante de descoberta.";
+    default:
+      return "";
+  }
+}
+
+function gerarInstrucaoSuspense(nivel){
+  switch(nivel){
+    case "nenhum":
+      return "Não enfatize suspense narrativo.";
+    case "baixo":
+      return "Use suspense leve. Sugira que existe algo a ser descoberto.";
+    case "medio":
+      return "Use suspense moderado. O público deve sentir que existe algo escondido na narrativa.";
+    case "alto":
+      return "Use suspense forte. A narrativa deve sustentar tensão progressiva e expectativa.";
+    case "hitchcock":
+      return "Aplique suspense no estilo Hitchcock: use informação assimétrica, faça o público perceber algo antes do personagem e aumente a tensão progressivamente.";
+    default:
+      return "";
+  }
+}
+
+function gerarInstrucaoLoops(nivel){
+  switch(nivel){
+    case "nenhum":
+      return "Não use story loops.";
+    case "alguns":
+      return "Use alguns story loops: abra pequenas perguntas narrativas que sejam respondidas depois.";
+    case "muitos":
+      return "Use muitos story loops: crie múltiplas perguntas internas e feche cada uma em momento oportuno.";
+    default:
+      return "";
+  }
+}
+
+function gerarInstrucaoEmocao(nivel){
+  switch(nivel){
+    case "baixa":
+      return "Mantenha intensidade emocional baixa e controlada.";
+    case "media":
+      return "Use intensidade emocional média, com boa variação de tensão e respiro.";
+    case "alta":
+      return "Use intensidade emocional alta. A narrativa deve provocar impacto emocional claro.";
+    case "cinematografica":
+      return "Use intensidade emocional cinematográfica. Construa batidas emocionais com contraste, silêncio, tensão, alívio e revelação.";
+    default:
+      return "";
+  }
+}
+
+function gerarInstrucaoMeaning(nivel){
+  switch(nivel){
+    case "leve":
+      return "Use significado de forma leve. A história pode sugerir algo maior sem enfatizar muito a camada simbólica.";
+    case "media":
+      return "Use significado moderado. A narrativa deve conter valor humano e uma camada interpretativa clara.";
+    case "profunda":
+      return "Use profundidade de significado alta. Trabalhe símbolo central, valor humano, transformação interior e eco final.";
+    default:
+      return "";
+  }
+}
+  function gerarInstrucaoMotorCuriosidade(){
+    return `
+MOTOR DE CURIOSIDADE
+
+Analise o potencial de retenção da narrativa com base em:
+1. Gancho inicial
+2. Tensão progressiva
+3. Lacuna de informação
+4. Virada narrativa
+5. Recompensa final
+
+Para cada item, classifique como: forte, médio ou fraco.
+
+Depois escreva:
+- principal risco de queda
+- ponto mais forte da história
+- sugestão prática de melhoria
+
+Finalize com uma nota geral de retenção de 0 a 5.
+`;
+  }
+
+  /*
+============================================================
+EXTRATOR DE SCORES
+Lê Retention Score e Meaning Score do relatório do Auditar
+============================================================
+*/
+
+function atualizarScoresNarrativos(texto){
+
+  if(!texto) return;
+
+  let retention = texto.match(/Retention Score:\s*([0-9.]+)/i);
+  let meaning = texto.match(/Meaning Score:\s*([0-9.]+)/i);
+
+  if(retention){
+    $('scoreRetention').innerText =
+      "Retention Score: " + retention[1];
+  }
+
+  if(meaning){
+    $('scoreMeaning').innerText =
+      "Meaning Score: " + meaning[1];
+  }
+
+}
+
+/*
+============================================================
+CURIOSITY GRAPH VISUAL
+Extrai notas do relatório do Auditar
+============================================================
+*/
+
+function atualizarCuriosityGraph(texto){
+
+  if(!texto) return;
+
+  // tenta encontrar números depois dos nomes principais
+  let hook    = texto.match(/gancho inicial[^0-9]*([0-9.]+)/i);
+  let middle  = texto.match(/manutenção da curiosidade[^0-9]*([0-9.]+)/i);
+  let twist   = texto.match(/virada narrativa[^0-9]*([0-9.]+)/i);
+  let ending  = texto.match(/recompensa final[^0-9]*([0-9.]+)/i);
+
+  // fallback caso o modelo use outro formato
+  if(!hook)   hook   = texto.match(/hook[^0-9]*([0-9.]+)/i);
+  if(!middle) middle = texto.match(/meio[^0-9]*([0-9.]+)/i);
+  if(!twist)  twist  = texto.match(/virada[^0-9]*([0-9.]+)/i);
+  if(!ending) ending = texto.match(/final[^0-9]*([0-9.]+)/i);
+
+  if(hook)   $('cgHook').innerText   = "Hook: " + hook[1];
+  if(middle) $('cgMiddle').innerText = "Meio: " + middle[1];
+  if(twist)  $('cgTwist').innerText  = "Virada: " + twist[1];
+  if(ending) $('cgEnding').innerText = "Final: " + ending[1];
+}
+
+  /*
+  ============================================================
+  AUDITORIA AVANÇADA
+  - Curiosity Graph
+  - Hitchcock Engine
+  - Story Loop Count
+  - Emotional Beat Map
+  - Meaning Engine
+  ============================================================
+*/
+
+function gerarInstrucaoAuditoriaAvancada(){
+  return `
+AUDITORIA AVANÇADA
+
+Além da análise básica, avalie a história com os seguintes motores:
+
+1. CURIOSITY GRAPH
+Analise a curva de curiosidade ao longo da narrativa.
+Verifique:
+- gancho inicial (nota de 0 a 5)
+- manutenção da curiosidade no meio (nota de 0 a 5)
+- virada narrativa (nota de 0 a 5)
+- recompensa final (nota de 0 a 5)
+
+2. HITCHCOCK ENGINE
+Analise suspense por informação assimétrica.
+Verifique:
+- existe algo que o público percebe antes do personagem?
+- existe segredo inicial?
+- existe revelação parcial?
+- a tensão cresce antes da revelação final?
+
+3. STORY LOOP COUNT
+Analise loops narrativos.
+Verifique:
+- quantas perguntas internas a narrativa abre
+- quantas ela fecha
+- se os loops sustentam atenção ou confundem
+
+4. EMOTIONAL BEAT MAP
+Analise o ritmo emocional.
+Verifique:
+- curiosidade
+- tensão
+- conflito emocional
+- virada
+- alívio, impacto ou eco final
+
+5. MEANING ENGINE
+Analise profundidade de significado.
+Verifique:
+- símbolo central
+- valor humano
+- transformação interior
+- camada metafórica
+- eco final
+
+FORMATO OBRIGATÓRIO DA RESPOSTA:
+
+CLAREZA NARRATIVA
+- clareza emocional
+- clareza narrativa
+- intensidade dramática
+- valor humano
+- coerência da progressão
+
+CURIOSITY GRAPH
+- gancho inicial
+- manutenção da curiosidade
+- virada narrativa
+- recompensa final
+
+HITCHCOCK ENGINE
+- segredo inicial
+- revelação parcial
+- tensão progressiva
+- explosão ou revelação final
+
+STORY LOOPS
+- quantidade de loops
+- qualidade dos loops
+- fechamento dos loops
+
+EMOTIONAL BEAT MAP
+- curiosidade inicial
+- tensão
+- conflito emocional
+- virada
+- recompensa emocional
+
+MEANING ENGINE
+- símbolo central
+- valor humano
+- transformação interior
+- camada metafórica
+- eco final
+
+NOTA FINAL
+- Retention Score: 0 a 5
+- Meaning Score: 0 a 5
+
+Depois escreva:
+- principal ponto fraco da narrativa
+- principal ponto forte
+- sugestão prática de melhoria sem reescrever tudo
+`;
+}
+
+  function montarPrompt(texto){
+    readConfigFromUI();
+
+    let prompt = texto;
+    const narrationRef = getNarrationReference();
+    if(state.etapaAtual === "lapidar" && narrationRef){
+      prompt = `REFERÊNCIA DE ESTILO NARRATIVO:
+${narrationRef}
+
+INSTRUÇÃO:
+Use como influência.
+Não copie.
+Absorva estilo e emoção.
+` + prompt;
+    }
+    prompt = gerarInstrucaoModoNarrativo(state.chef.publico, state.chef.estilo) + "\n\n" + prompt;
+    prompt = gerarInstrucaoEstilo(state.chef.estilo) + "\n\n" + prompt;
+
+    if(state.chef.publico === 'literario' || state.chef.estilo === 'literario'){
+      prompt = regraAntiBarroco() + "\n\n" + prompt;
+    }
+
+    if(state.etapaAtual === "lapidar" || state.etapaAtual === "forjar" || state.etapaAtual === "estruturar"){
+
+  let chefInstrucao = "";
+
+  const arq = parseInt(state.chef.arquetipos || "0");
+  const drama = parseInt(state.chef.drama || "0");
+  const valor = parseInt(state.chef.valor || "0");
+
+  if(arq > 0) chefInstrucao += `Aplicar arquétipos com intensidade ${arq}.\n`;
+  if(drama > 0) chefInstrucao += `Intensidade dramática nível ${drama}.\n`;
+  if(valor > 0) chefInstrucao += `Reforçar valor universal nível ${valor}.\n`;
+
+  // ==========================================================
+  // NOVOS TEMPEROS NARRATIVOS
+  // ==========================================================
+  chefInstrucao += gerarInstrucaoCuriosidade(state.chef.curiosidade) + "\n";
+  chefInstrucao += gerarInstrucaoSuspense(state.chef.suspense) + "\n";
+  chefInstrucao += gerarInstrucaoLoops(state.chef.loops) + "\n";
+  chefInstrucao += gerarInstrucaoEmocao(state.chef.emocao) + "\n";
+  chefInstrucao += gerarInstrucaoMeaning(state.chef.meaning) + "\n";
+  chefInstrucao += gerarInstrucaoPontoVista(state.chef.pontoVista) + "\n";
+
+  if(chefInstrucao.trim().length){
+    prompt = chefInstrucao + "\n\n" + prompt;
+  }
+}
+
+    if(state.etapaAtual === "estruturar"){
+      prompt = gerarInstrucaoEstrutura(state.chef.estrutura) + "\n\n" + prompt;
+    }
+
+    if(state.etapaAtual === "forjar"){
+  prompt += "\n\n" + gerarInstrucaoLexical(state.chef.publico);
+
+  // ==========================================================
+  // FORJAR deve intensificar imagem, emoção e subtexto
+  // ==========================================================
+  prompt += "\n\nIntensifique a visualidade, o subtexto, o ritmo e a força emocional da narrativa.";
+  prompt += "\nPriorize imagens concretas.";
+  prompt += "\nUse pausas e contraste emocional quando fizer sentido.";
+}
+
+   if(state.etapaAtual === "auditar"){
+  prompt =
+`Você é um analista de narrativa cinematográfica para YouTube.
+
+Sua tarefa é auditar a história abaixo com foco em:
+- clareza
+- retenção
+- emoção
+- suspense
+- significado
+
+A análise deve ser prática, técnica e útil para revisão humana.
+Não reescreva a história.
+Não faça elogios genéricos.
+Não seja professoral.
+
+${gerarInstrucaoAuditoriaAvancada()}
+
+${gerarInstrucaoMotorCuriosidade()}
+
+TEXTO BASE:
+` + texto;
+
+    if(state.chef.publico === "infantil"){
+      prompt += `
+
+YOUTUBE INFANTIL — COMPLIANCE
+
+Analise se o conteúdo é adequado para público infantil no YouTube.
+
+Verifique:
+
+1. SEGURANÇA
+- Existe violência, medo excessivo ou conteúdo perturbador?
+
+2. LINGUAGEM
+- O vocabulário é apropriado para crianças?
+- A compreensão é fácil?
+
+3. INTENÇÃO
+- Existe manipulação emocional?
+- Existe tentativa de prender atenção de forma agressiva?
+
+4. CONTEÚDO SENSÍVEL
+- Existe qualquer conteúdo impróprio para crianças?
+
+5. MONETIZAÇÃO SEGURA
+- Existe incentivo ao consumo?
+- Existe indução de comportamento?
+
+FORMATO DA RESPOSTA:
+
+YOUTUBE INFANTIL
+- seguro: sim/não
+- adequado: sim/não
+- riscos identificados:
+- sugestão de ajuste (curta e prática)
+
+REGRAS:
+- NÃO reescrever a história
+- NÃO explicar demais
+- resposta direta
+`;
+    }
+}
+
+    if(state.etapaAtual === "audio"){
+      const publico = state.chef.publico || "adulto";
+      prompt =
+`Você é diretor de locução (voz) para um vídeo cinematográfico no YouTube.
+
+Tarefa:
+- Transforme o TEXTO BASE em uma TRILHA DE LOCUÇÃO (narração pronta), com marcações de voz.
+
+Regras:
+- NÃO avalie o texto.
+- NÃO explique.
+- NÃO faça comentário didático.
+- Não use títulos, tópicos ou estrutura de análise.
+- Preserve o sentido e a ordem do texto.
+- Insira marcações de pausa: [pausa 0.3], [pausa 0.7], [pausa 1.2]
+- Insira marcações discretas de intenção: [sussurro], [firme], [contido], [quebra], [respira]
+- Quando houver frase-chave: [ênfase]
+- Evite moral explícita no final.
+- Público alvo: ${publico}
+
+Formato:
+- Blocos curtos (1 a 3 frases por bloco), com respiro natural.
+
+TEXTO BASE:
+` + texto;
+    }
+
+    if(state.etapaAtual === "diretor"){
+      prompt =
+`Você é DIRETOR de um curta cinematográfico para YouTube.
+
+TEXTO BASE: a história abaixo.
+
+Entregue uma DIREÇÃO VISUAL em formato de lista de cenas (shotlist), com:
+- CENA (1,2,3...)
+- AMBIENTE (INT/EXT, hora do dia)
+- AÇÃO (o que vemos)
+- CÂMERA (tipo de plano, movimento, lente se fizer sentido)
+- LUZ/SOMBRA (clima)
+- SOM (silêncio, ruídos, respiração, trilha sugerida)
+- SUBTEXTO (1 linha, sem explicar demais)
+
+Regras:
+- Não faça análise. Não elogie. Não dê aula.
+- Escreva concreto, cinematográfico, com cortes e ritmo.
+- Evite vocabulário rebuscado.
+
+TEXTO BASE:
+` + texto;
+    }
+
+    return prompt;
+  }
+
+  /*
+    ============================================================
+    CHAMADAS DE API
+    ============================================================
+  */
+  async function chamarGemini(prompt){
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${state.config.model}:generateContent?key=${state.config.apiKeys.gemini}`,
+      {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{temperature: state.config.temperatura}
+        })
+      }
+    );
+
+    const data = await response.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data, null, 2);
+  }
+
+  async function chamarOpenAI(prompt){
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer " + state.config.apiKeys.openai
+      },
+      body:JSON.stringify({
+        model: state.config.model,
+        messages:[
+          {role:"system", content:"Você é um roteirista profissional."},
+          {role:"user", content: prompt}
+        ],
+        temperature: state.config.temperatura
+      })
+    });
+
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content || JSON.stringify(data, null, 2);
+  }
+
+  async function chamarOpenAICompat(prompt){
+
+    const endpoint = "https://openrouter.ai/api/v1/chat/completions";
+    const referer  = (window.location.protocol === "file:" || window.location.origin === "null")
+      ? "https://atelier-narrativo.local"
+      : window.location.origin;
+
+    let response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": "Bearer " + state.config.apiKeys.openrouter,
+          "HTTP-Referer":  referer,
+          "X-Title":       "Atelier Narrativo"
+        },
+        body: JSON.stringify({
+          model:       state.config.model,
+          messages:    [
+            { role: "system", content: "Você é um roteirista profissional cinematográfico." },
+            { role: "user",   content: prompt }
+          ],
+          temperature: state.config.temperatura
+        })
+      });
+    } catch(networkErr) {
+      const err = new Error(networkErr.message || String(networkErr));
+      err._diag = { tipo:"Erro de rede / CORS", endpoint, modelo:state.config.modelo,
+                    status:"—", raw:"(sem resposta — falha antes de chegar ao servidor)" };
+      throw err;
+    }
+
+    const rawText = await response.text();
+    let data;
+    try { data = JSON.parse(rawText); } catch(_) { data = null; }
+
+    if (!response.ok) {
+      let msg = "";
+      if (data) {
+        if (typeof data.error === "string")   msg = data.error;
+        else if (data.error?.message)         msg = data.error.message;
+        else if (data.message)                msg = data.message;
+        else                                  msg = JSON.stringify(data, null, 2);
+      } else { msg = rawText; }
+
+      // PROBLEMA 3: fallback amigável para modelos indisponíveis no OpenRouter
+      // (ex.: Nemotron/DeepSeek podem retornar 404 dependendo do provedor/conta)
+      if(response.status === 404){
+        alert("Modelo não disponível no OpenRouter. Tente outro.");
+        return "";
+      }
+
+      const err = new Error(msg);
+      err._diag = { tipo:"Erro HTTP do provedor", endpoint, modelo:state.config.modelo,
+                    status: response.status + " " + response.statusText,
+                    raw: rawText.slice(0, 1500) };
+      throw err;
+    }
+
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content) {
+      const err = new Error("Resposta 2xx mas sem choices[0].message.content");
+      err._diag = { tipo:"Resposta inesperada do provedor", endpoint, modelo:state.config.modelo,
+                    status: response.status + " " + response.statusText,
+                    raw: rawText.slice(0, 1500) };
+      throw err;
+    }
+
+    return content;
+  }
+
+  async function chamarClaude(prompt){
+    const apiKey = state.config.apiKeys.claude || "";
+    if(!apiKey) throw new Error("API key da Claude não configurada.");
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key": apiKey,
+        "anthropic-version":"2023-06-01"
+      },
+      body:JSON.stringify({
+        model: state.config.model,
+        max_tokens: 4096,
+        messages:[
+          {
+            role:"user",
+            content:[{type:"text", text: prompt}]
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const text = data?.content?.[0]?.text || JSON.stringify(data, null, 2);
+    return text;
+  }
+
+  async function callAI(provider, model, prompt){
+    // MELHORIA EXTRA: logs antes da chamada
+    console.log("Provider:", provider);
+    console.log("Model:", model);
+    // Garantir leitura consistente
+    state.config.provider = provider;
+    state.config.model = model;
+
+    switch(provider){
+      case "openai":
+        return await chamarOpenAI(prompt);
+      case "gemini":
+        return await chamarGemini(prompt);
+      case "openrouter":
+        return await chamarOpenAICompat(prompt);
+      case "claude":
+        return await chamarClaude(prompt);
+      default:
+        throw new Error("Provider inválido: " + provider);
+    }
+  }
+
+  /*
+    ============================================================
+    EXECUÇÃO POR ETAPA
+    ============================================================
+  */
+async function executarEtapa(stage){
+  const btn = event?.target;
+  const span = btn?.querySelector("span");
+  const originalText = span?.innerText;
+
+  const resetButton = () => {
+    if (btn) {
+      btn.classList.remove("loading");
+      btn.disabled = false;
+      if (span && originalText) span.innerText = originalText;
+    }
+  };
+
+  if(btn){
+    btn.classList.add("loading");
+    btn.disabled = true;
+    if(span) span.innerText = "Processando...";
+  }
+  uiToState(stage);
+  state.etapaAtual = stage;
+  const textoEntrada = state.entradaPorEtapa[stage] || "";
+  if(state.textosPorEtapa[stage]){
+    const confirmar = confirm("Essa etapa já foi executada. Deseja executar novamente?");
+    if(!confirmar){
+      resetButton();
+      return;
+    }
+  }
+
+  if(!textoEntrada.trim()){
+    alert("Entrada vazia. Cole ou escreva um texto para processar.");
+    
+    resetButton();
+    return;
+  }
+  const prompt = montarPrompt(textoEntrada);
+  let out = "";
+  try{
+    out = await callAI(state.config.provider, state.config.model, prompt);
+  } catch(e) {
+    console.error(e);
+    mostrarErroDetalhado(e);
+    resetButton();
+    return;
+  }
+  state.textosPorEtapa[stage] = out || "";
+  stateToUI(stage);
+  if(stage === "auditar"){
+    atualizarScoresNarrativos(out);
+    atualizarCuriosityGraph(out);
+  }
+  persist();
+  if(btn){
+    btn.classList.remove("loading");
+    btn.classList.add("done");
+    btn.disabled = false;
+    if(span) span.innerText = "✔ Concluído";
+  }
+}
+
+  function enviarParaProxima(stage){
+    uiToState(stage);
+
+    const idx = ETAPAS_UI.indexOf(stage);
+    if(idx < 0 || idx === ETAPAS_UI.length - 1) return;
+
+    const next = ETAPAS_UI[idx+1];
+
+    if(stage === "auditar"){
+      state.entradaPorEtapa[next] = state.entradaPorEtapa["auditar"] || "";
+    } else if(stage === "audio") {
+      state.entradaPorEtapa[next] = state.entradaPorEtapa["audio"] || "";
+    } else {
+      state.entradaPorEtapa[next] = state.textosPorEtapa[stage] || "";
+    }
+
+    stateToUI(next);
+    persist();
+    $("in_"+next).focus();
+  }
+
+  /*
+    ============================================================
+    EXPORTAÇÃO .MD
+    - Corrigido para não dar sensação de reset
+    - Sincroniza estado antes do download
+    ============================================================
+  */
+  function todayYYYYMMDD(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function slugify(s){
+    return (s || 'SemTitulo')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-zA-Z0-9]+/g,'_')
+      .replace(/^_+|_+$/g,'')
+      .slice(0,60);
+  }
+
+  function saveStageAsMD(stage){
+    uiToState(stage);
+    persist();
+
+    let text = state.textosPorEtapa[stage] || "";
+    if (stage === "diretor" || stage === "lapidar") {
+      const data = {
+        referencia: document.getElementById("narration-ref")?.value || "",
+        texto: text
+      };
+      text = `Referência: ${data.referencia}\n\n${data.texto}`;
+    }
+    if(!text.trim().length){
+      alert('Nada para salvar nesta etapa. Execute ou escreva algo no resultado.');
+      return;
+    }
+
+    const titulo = slugify(($('tituloProjeto').value || '').trim());
+    const filename = `${todayYYYYMMDD()}_${titulo}_${stage}.md`;
+
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 300);
+  }
+
+  document.getElementById('salvarProjetoCompleto')
+  .addEventListener('click', salvarProjetoCompleto);
+
+  window.onload = () => {
+    autoFillFields(defaultData);
+  };
+
+(function boot(){
+  restore();
+  syncAllUI();
+  wireAutoSave();
+
+  // PROBLEMA 2: atualizar provider/model em tempo real
+  const providerEl = $("provider");
+  if(providerEl){
+    // use capture para trocar o campo de API key antes do persist() do wireAutoSave
+    providerEl.addEventListener("change", updateModels, true);
+  }
+  const modelEl = $("model");
+  if(modelEl){
+    modelEl.addEventListener("change", () => {
+      console.log("Modelo alterado");
+    });
+  }
+})();
+
+  function saveStageAsMD_UI(stage){
+    saveStageAsMD(stage);
+  }
+
+  /*
+    ============================================================
+    LEGIBILIDADE (FLESCH PT)
+    ============================================================
+  */
+  function calcularFlesch(texto) {
+    const frases = texto.split(/[.!?]+/).filter(f => f.trim().length > 0);
+    const palavras = texto.split(/\s+/).filter(p => p.length > 0);
+
+    let totalSilabas = 0;
+    palavras.forEach(palavra => {
+      const silabas = palavra
+        .toLowerCase()
+        .replace(/[^a-záéíóúâêôãõç]/g, '')
+        .match(/[aeiouáéíóúâêôãõ]+/g);
+      totalSilabas += silabas ? silabas.length : 1;
+    });
+
+    const ASL = palavras.length / Math.max(frases.length, 1);
+    const ASW = totalSilabas / Math.max(palavras.length, 1);
+    const flesch = 248.835 - (1.015 * ASL) - (84.6 * ASW);
+    return Number(flesch.toFixed(2));
+  }
+
+  function classificarFlesch(indice) {
+    const n = parseFloat(indice);
+    if (n >= 75) return "Muito Fácil";
+    if (n >= 50) return "Médio";
+    if (n >= 25) return "Difícil";
+    return "Muito Difícil";
+  }
+
+  function analisarLegibilidade_UI(){
+    uiToState("auditar");
+    const texto = state.entradaPorEtapa.auditar || "";
+    if(!texto.trim()){
+      alert("Entrada do Auditar vazia. Envie a história para Auditar antes.");
+      return;
+    }
+    const idx = calcularFlesch(texto);
+    const nivel = classificarFlesch(idx);
+    state.metricas.flesch = idx;
+    state.metricas.nivel = nivel;
+    $('fleschOut').innerText = `Índice: ${idx.toFixed(2)} | Nível: ${nivel}`;
+    persist();
+  }
+
+  /*
+    ============================================================
+    PERSISTÊNCIA
+    ============================================================
+  */
+  function persist(){
+    readConfigFromUI();
+    const payload = {
+      etapaAtual: state.etapaAtual,
+      referencia: document.getElementById("narration-ref")?.value || "",
+      config:{
+        provider: state.config.provider,
+        model: state.config.model,
+        temperatura: state.config.temperatura,
+        baseUrl: state.config.baseUrl,
+        apiKeys: {...state.config.apiKeys}
+      },
+      narration: state.narration,
+      chef: {...state.chef},
+      entradaPorEtapa: {...state.entradaPorEtapa},
+      textosPorEtapa: {...state.textosPorEtapa},
+      tituloProjeto: $('tituloProjeto').value || "",
+      metricas: {...state.metricas}
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  function restore(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+
+    try{
+      const p = JSON.parse(raw);
+      state.etapaAtual = p.etapaAtual || 'lapidar';
+      state.config.provider = p.config?.provider || 'gemini';
+      state.config.model = p.config?.model || 'gemini-2.5-pro';
+      state.config.temperatura = p.config?.temperatura ?? 0.7;
+      state.config.baseUrl = p.config?.baseUrl || '';
+      state.config.apiKeys = {...state.config.apiKeys, ...(p.config?.apiKeys || {})};
+      state.narration = p.narration || state.narration || 'testemunha';
+
+      state.chef = {...state.chef, ...(p.chef || {})};
+      state.entradaPorEtapa = {...state.entradaPorEtapa, ...(p.entradaPorEtapa || {})};
+      state.textosPorEtapa = {...state.textosPorEtapa, ...(p.textosPorEtapa || {})};
+      state.metricas = {...state.metricas, ...(p.metricas || {})};
+
+      const sessionKey = sessionStorage.getItem('contador_apiKey_v82_'+state.config.provider);
+      if(sessionKey && $('apiKey')) $('apiKey').value = sessionKey;
+      $('tituloProjeto').value = p.tituloProjeto || '';
+      const ref = p.referencia || "";
+      const refEl = document.getElementById("narration-ref");
+      if(refEl) refEl.value = ref;
+    }catch(e){
+      console.error('Falha ao restaurar estado:', e);
+    }
+  }
+
+  function wireAutoSave(){
+    ["provider","model","temperatura","apiKey","baseUrl","tituloProjeto","publico","estruturaNarrativa","estiloLing","arquetipos","drama","valor",
+"curiosidade","suspense","loops","emocao","meaning","narration"].forEach(id=>{
+      const el = $(id);
+      if(!el) return;
+      el.addEventListener("input", ()=>{ persist(); });
+      el.addEventListener("change", ()=>{ persist(); });
+    });
+
+    for(const st of ETAPAS_UI){
+      $("in_"+st).addEventListener("input", ()=>{ uiToState(st); persist(); });
+      $("out_"+st).addEventListener("input", ()=>{ uiToState(st); persist(); });
+    }
+  }
+
+
+  function mostrarErroDetalhado(e) {
+    const d = e?._diag || {};
+    document.getElementById('errTipo').textContent     = d.tipo     || "Erro desconhecido";
+    document.getElementById('errEndpoint').textContent = d.endpoint || (state.config.baseUrl || "https://openrouter.ai/api/v1/chat/completions");
+    document.getElementById('errModelo').textContent   = d.modelo   || state.config.modelo   || "—";
+    document.getElementById('errStatus').textContent   = d.status   || "—";
+    document.getElementById('errMsg').textContent      = (e && e.message) ? e.message : String(e);
+    const rawEl = document.getElementById('errRaw');
+    const rawWrap = document.getElementById('errRawWrap');
+    if (d.raw) {
+      rawEl.textContent = d.raw;
+      rawWrap.style.display = '';
+    } else {
+      rawWrap.style.display = 'none';
+    }
+    document.getElementById('errModal').classList.add('open');
+  }
+
+  /*
+============================================================
+SALVAR PROJETO COMPLETO
+Gera um único .md com todas as etapas e configurações
+============================================================
+*/
+function salvarProjetoCompleto(){
+
+  // Garante que o estado da UI está sincronizado antes de salvar
+  for(const st of ETAPAS_UI){
+    uiToState(st);
+  }
+  persist();
+
+  const data = new Date().toISOString().split("T")[0];
+  const titulo = ($('tituloProjeto').value || 'Projeto_Atelier').trim();
+
+  const conteudo = `# ${titulo}
+
+Data: ${data}
+
+---
+
+## Configurações do Motor
+- Provider: ${state.config.provider}
+- Modelo: ${state.config.model}
+- Temperatura: ${state.config.temperatura}
+- Base URL: ${state.config.baseUrl || "(padrão do motor)"}
+
+---
+
+## Configurações do Chef
+- Público-Alvo: ${state.chef.publico}
+- Estrutura Narrativa: ${state.chef.estrutura}
+- <span data-tooltip="Define a forma emocional e estética da narrativa.">Estilo de Linguagem</span>: ${state.chef.estilo}
+- <span data-tooltip="Forças simbólicas que tornam a história universal.">Arquétipos</span>: ${state.chef.arquetipos}
+- <span data-tooltip="Controla o peso emocional da narrativa.">Intensidade Dramática</span>: ${state.chef.drama}
+- <span data-tooltip="O que torna a história relevante para qualquer pessoa.">Valor Universal</span>: ${state.chef.valor}
+- Curiosidade Narrativa: ${state.chef.curiosidade || ""}
+- Suspense (Hitchcock): ${state.chef.suspense || ""}
+- Story Loops: ${state.chef.loops || ""}
+- Intensidade Emocional: ${state.chef.emocao || ""}
+- Profundidade de Significado: ${state.chef.meaning || ""}
+
+---
+
+## Modo de Narração
+- Modo: ${state.narration || "testemunha"}
+
+---
+
+## Referência Narrativa
+${document.getElementById("narration-ref")?.value || ""}
+
+---
+
+## Lapidar
+
+${state.textosPorEtapa.lapidar || ""}
+
+---
+
+## Estruturar
+
+${state.textosPorEtapa.estruturar || ""}
+
+---
+
+## Forjar
+
+${state.textosPorEtapa.forjar || ""}
+
+---
+
+## Auditar
+
+${state.textosPorEtapa.auditar || ""}
+
+---
+
+## Audio
+
+${state.textosPorEtapa.audio || ""}
+
+---
+
+## Diretor
+
+${state.textosPorEtapa.diretor || ""}
+`;
+
+  const nomeArquivo = `${slugify(titulo)}_${data}_projeto_completo.md`;
+
+  const blob = new Blob([conteudo], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nomeArquivo;
+  a.style.display = 'none';
+
+  document.body.appendChild(a);
+  a.click();
+
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    a.remove();
+  }, 300);
+}
+
+// =========================================
+// TOOLTIP AUTOMÁTICO (leve e inteligente)
+// =========================================
+document.querySelectorAll("[data-tooltip]").forEach(el => {
+  const tooltip = document.createElement("div");
+  tooltip.className = "tooltip-text";
+  tooltip.innerText = el.getAttribute("data-tooltip");
+  el.classList.add("tooltip");
+  el.appendChild(tooltip);
+});
+
+</script>
+
+
+<!-- Modal diagnóstico de erro -->
+<div id="errModal">
+  <div id="errBox">
+    <h2>⚠️ Erro ao chamar o motor</h2>
+    <div class="errRow"><b>Tipo:</b> <span id="errTipo"></span></div>
+    <div class="errRow"><b>Endpoint:</b> <span id="errEndpoint"></span></div>
+    <div class="errRow"><b>Modelo:</b> <span id="errModelo"></span></div>
+    <div class="errRow"><b>HTTP Status:</b> <span id="errStatus"></span></div>
+    <div class="errRow"><b>Mensagem:</b> <span id="errMsg"></span></div>
+    <div id="errRawWrap">
+      <div class="errRow" style="margin-top:10px"><b>Resposta bruta do servidor:</b></div>
+      <div id="errRaw"></div>
+    </div>
+    <div class="errRow" style="margin-top:10px;color:#bfb6d9;font-size:12px;">
+      💡 Dicas: verifique se a <b>API Key</b> está correta, se o <b>modelo</b> está disponível no provedor,
+      e se a <b>Base URL</b> é a correta para o serviço (ou deixe em branco para usar OpenRouter).
+    </div>
+    <button id="errClose" onclick="document.getElementById('errModal').classList.remove('open')">Fechar</button>
+  </div>
+</div>
+</body>
+</html>
